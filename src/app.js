@@ -4,6 +4,7 @@ const v03 = window.SkillV03;
 const v04 = window.SkillV04;
 const v10 = window.SkillV10;
 const v11 = window.SkillV11;
+const v12 = window.SkillV12;
 
 const initialLeads = [
   {
@@ -347,6 +348,9 @@ const els = {
   workflowSteps: document.getElementById("workflowSteps"),
   googleStrategy: document.getElementById("googleStrategy"),
   verificationRules: document.getElementById("verificationRules"),
+  apiProviders: document.getElementById("apiProviders"),
+  socialQueries: document.getElementById("socialQueries"),
+  contactFields: document.getElementById("contactFields"),
   taskStatus: document.getElementById("taskStatus"),
   visibleSummary: document.getElementById("visibleSummary"),
   saveStatus: document.getElementById("saveStatus"),
@@ -412,12 +416,12 @@ function channelClass(status) {
 }
 
 function firstEmail(lead) {
-  return v02.createTemplateMessage(lead.selectedTemplateId || "first-touch", lead, els.productInput?.value);
+  return v12.rewriteEnglishMessage(v02.createTemplateMessage(lead.selectedTemplateId || "first-touch", lead, els.productInput?.value), els.productInput?.value);
 }
 
 function whatsappOpener(lead) {
   if (lead.whatsappOpener) return lead.whatsappOpener;
-  return `Hi ${lead.company} team, this is [Your Name]. I saw that your company works with ${lead.mainProducts}. We manufacture custom cabinetry, wardrobes, wood doors, and export furniture. May I send a short catalogue and project reference?`;
+  return `Hi ${lead.company} team, this is [Your Name]. I saw that your company works with ${lead.mainProducts}. We manufacture ${v12.normalizeProductForEnglish(els.productInput?.value)}. May I send a short catalogue and project reference?`;
 }
 
 function filteredLeads() {
@@ -739,10 +743,16 @@ function renderDetail() {
 }
 
 function renderWorkflowOutput() {
+  const buyerTypes = els.buyerInput.value.split(/\s*\+\s*/).filter(Boolean);
   const strategy = v10.buildSearchStrategy({
     product: els.productInput.value,
     country: els.countryInput.value,
-    buyerTypes: els.buyerInput.value.split(/\s*\+\s*/).filter(Boolean),
+    buyerTypes,
+  });
+  const sourcePlan = v12.buildLeadSourcePlan({
+    product: els.productInput.value,
+    country: els.countryInput.value,
+    buyerTypes,
   });
   els.keywordList.innerHTML = currentKeywords.map((keyword) => `<span class="keyword-pill">${keyword}</span>`).join("");
   els.workflowSteps.innerHTML = currentSteps.map((step) => `<span class="step-pill">${step} ✅</span>`).join("");
@@ -750,6 +760,9 @@ function renderWorkflowOutput() {
     .map((item) => `<div class="strategy-item">${item}</div>`)
     .join("");
   els.verificationRules.innerHTML = strategy.verificationRules.map((item) => `<div class="strategy-item">${item}</div>`).join("");
+  els.apiProviders.innerHTML = sourcePlan.apiProviders.map((item) => `<div class="strategy-item">${item}</div>`).join("");
+  els.socialQueries.innerHTML = sourcePlan.socialQueries.map((item) => `<div class="strategy-item">${item}</div>`).join("");
+  els.contactFields.innerHTML = sourcePlan.extractionTargets.map((item) => `<span class="field-chip">${item}</span>`).join("");
 }
 
 function runWorkflowFromInput() {

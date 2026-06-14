@@ -75,11 +75,12 @@ function crmStatus(score) {
 }
 
 function buildEmail(company, product, products) {
+  const englishProduct = "whole-house custom cabinetry, kitchen cabinets, wardrobes, wood doors, and export furniture";
   return `Subject: ${company} and custom cabinetry supply
 
 Hi ${company} team,
 
-I noticed that ${company} works with ${products}. We manufacture whole-house custom cabinetry, kitchen cabinets, wardrobes, wood doors, and export furniture for builders, designers, kitchen companies, and importers. Your current product direction looks relevant to ${product}.
+I noticed that ${company} works with ${products}. We manufacture ${englishProduct} for builders, designers, kitchen companies, and importers. Your current product direction looks relevant to ${englishProduct}.
 
 Would it be useful if I send a short catalogue and capability sheet for cabinets, wardrobes, wood doors, and furniture packages?
 
@@ -87,7 +88,7 @@ Best regards,`;
 }
 
 function buildWhatsapp(company, product, products) {
-  return `Hi ${company} team, this is [Your Name]. I saw that your company works with ${products}. We manufacture ${product}. May I send a short catalogue and project reference?`;
+  return `Hi ${company} team, this is [Your Name]. I saw that your company works with ${products}. We manufacture whole-house custom cabinetry, kitchen cabinets, wardrobes, wood doors, and export furniture. May I send a short catalogue and project reference?`;
 }
 
 function createLead(seed, index, task) {
