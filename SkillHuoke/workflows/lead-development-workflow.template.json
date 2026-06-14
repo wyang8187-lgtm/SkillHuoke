@@ -1,0 +1,147 @@
+{
+  "workflow_name": "Skill获客外贸客户自动开发工作流",
+  "version": "1.0.0",
+  "mode": "research_and_manual_review",
+  "trigger": {
+    "type": "manual_or_scheduled",
+    "manual_button": "开始找客户",
+    "schedule_example": "09:00 daily"
+  },
+  "default_input": {
+    "task_name": "澳洲全屋定制客户开发",
+    "product": "全屋定制、橱柜、衣柜、木门、家具出口",
+    "target_countries": ["Australia"],
+    "buyer_types": ["Builder", "Designer", "Kitchen Company", "Importer"],
+    "lead_quantity": 50,
+    "contact_priority": ["WhatsApp", "Phone", "Email", "LinkedIn"],
+    "table_language": "zh-CN",
+    "outreach_language": "en",
+    "send_mode": "manual_review"
+  },
+  "steps": [
+    {
+      "id": "create_task",
+      "name": "创建找客任务",
+      "input": ["product", "target_countries", "buyer_types", "lead_quantity"],
+      "output": ["lead_task"],
+      "status_after_success": "Running"
+    },
+    {
+      "id": "generate_keywords",
+      "name": "生成搜索关键词",
+      "input": ["product", "target_countries", "buyer_types"],
+      "output": ["search_keywords", "source_plan"]
+    },
+    {
+      "id": "discover_companies",
+      "name": "发现客户公司",
+      "sources": ["company_website", "search_engine", "linkedin_company_page", "trade_show_directory", "industry_directory", "association_directory"],
+      "required_fields": ["company_name", "website", "country", "source_url", "initial_buyer_type"],
+      "output": ["candidate_companies"]
+    },
+    {
+      "id": "enrich_company",
+      "name": "补全公司信息",
+      "required_fields": ["company_summary", "main_products", "buyer_type", "product_match", "city", "source_evidence"],
+      "output": ["companies"]
+    },
+    {
+      "id": "verify_contacts",
+      "name": "核验联系方式",
+      "priority": ["WhatsApp", "Phone", "Email", "LinkedIn", "Contact Form"],
+      "whatsapp_status_values": ["已验证WhatsApp", "电话可核验WhatsApp", "未公开WhatsApp"],
+      "email_status_values": ["官网邮箱", "公开商业邮箱", "联系表单", "未找到"],
+      "rules": [
+        "Do not fabricate WhatsApp numbers.",
+        "Do not treat every phone number as WhatsApp.",
+        "Do not fabricate emails or contacts.",
+        "Every contact field must include source or confidence status."
+      ],
+      "output": ["contacts"]
+    },
+    {
+      "id": "score_leads",
+      "name": "AI客户评分",
+      "score_model": {
+        "product_fit": 30,
+        "buyer_type_fit": 20,
+        "market_fit": 15,
+        "contactability": 15,
+        "evidence_quality": 10,
+        "business_potential": 10
+      },
+      "priority_bands": {
+        "A": "85-100",
+        "B": "75-84",
+        "C": "60-74",
+        "D": "0-59"
+      },
+      "output": ["lead_scores"]
+    },
+    {
+      "id": "generate_outreach",
+      "name": "生成开发内容",
+      "channels": ["email", "whatsapp", "linkedin", "follow_up_1", "follow_up_2"],
+      "rules": [
+        "Use real company evidence for personalization.",
+        "Keep first message concise.",
+        "Do not claim purchase intent unless verified.",
+        "Messages require manual review before sending."
+      ],
+      "output": ["outreach_messages"]
+    },
+    {
+      "id": "assign_crm",
+      "name": "进入CRM跟进",
+      "crm_statuses": ["New", "Verified", "Contacted", "Replied", "Quoting", "Sample", "Negotiating", "Won", "Lost", "Not Fit"],
+      "default_assignment_rules": {
+        "A": "Verified",
+        "B": "Verified",
+        "C": "New",
+        "D": "Not Fit"
+      },
+      "output": ["follow_ups"]
+    },
+    {
+      "id": "export_results",
+      "name": "导出结果",
+      "formats": ["csv", "xlsx"],
+      "columns": [
+        "公司名称",
+        "国家",
+        "城市",
+        "官网",
+        "客户类型",
+        "主营产品",
+        "产品匹配点",
+        "来源链接",
+        "WhatsApp状态",
+        "WhatsApp/电话",
+        "邮箱状态",
+        "邮箱",
+        "LinkedIn",
+        "联系人",
+        "职位",
+        "AI评分",
+        "优先级",
+        "AI分析",
+        "首封开发信",
+        "WhatsApp开场白",
+        "CRM状态",
+        "下次跟进时间",
+        "备注"
+      ],
+      "output": ["export_file"]
+    }
+  ],
+  "success_criteria": {
+    "minimum_lead_fill_rate": 0.8,
+    "required_for_each_company": ["company_name", "website_or_source_url", "lead_score"],
+    "required_for_priority_leads": ["first_email", "whatsapp_opener", "crm_status"],
+    "data_quality_rule": "No fabricated WhatsApp, email, phone, or contact person."
+  },
+  "human_review_gate": {
+    "required": true,
+    "message": "请确认 A/B 级客户是否进入联系队列，并人工检查开发信和 WhatsApp 话术。"
+  }
+}
