@@ -118,6 +118,7 @@ textarea {
 .topbar,
 .task-panel,
 .source-panel,
+.search-panel,
 .import-panel,
 .kpi,
 .lead-area,
@@ -219,10 +220,48 @@ h2 {
   padding: 16px;
 }
 
+.search-panel {
+  margin-top: 14px;
+  padding: 16px;
+}
+
 .source-grid {
   display: grid;
   gap: 14px;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1.1fr);
+}
+
+.search-grid {
+  align-items: end;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(150px, 0.8fr) minmax(180px, 1fr) minmax(180px, 1fr) minmax(260px, 1.4fr) auto;
+}
+
+.search-results {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.search-result-card {
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+}
+
+.search-result-card h3 {
+  font-size: 14px;
+  margin: 0;
+}
+
+.search-result-meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .field-list {
@@ -815,6 +854,7 @@ a:hover {
   .workflow-output,
   .strategy-panel,
   .source-grid,
+  .search-grid,
   .import-grid,
   .manual-form,
   .operations-grid,

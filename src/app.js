@@ -5,6 +5,7 @@ const v04 = window.SkillV04;
 const v10 = window.SkillV10;
 const v11 = window.SkillV11;
 const v12 = window.SkillV12;
+const searchTools = window.SkillSearch;
 
 const initialLeads = [
   {
@@ -359,7 +360,16 @@ const els = {
   csvImport: document.getElementById("csvImport"),
   downloadTemplate: document.getElementById("downloadTemplate"),
   importStatus: document.getElementById("importStatus"),
+  searchProvider: document.getElementById("searchProvider"),
+  searchApiKey: document.getElementById("searchApiKey"),
+  searchEngineId: document.getElementById("searchEngineId"),
+  searchQuery: document.getElementById("searchQuery"),
+  runInternetSearch: document.getElementById("runInternetSearch"),
+  searchResults: document.getElementById("searchResults"),
+  searchStatus: document.getElementById("searchStatus"),
 };
+
+let searchCandidates = [];
 
 if (savedWorkspace?.taskStatus) {
   els.taskStatus.textContent = savedWorkspace.taskStatus;
@@ -832,6 +842,83 @@ function downloadTextFile(content, filename, type = "text/csv;charset=utf-8") {
   URL.revokeObjectURL(url);
 }
 
+function renderSearchResults() {
+  if (!searchCandidates.length) {
+    els.searchResults.innerHTML = "<p class=\"muted\">暂无搜索结果。输入 API Key 后点击联网搜索。</p>";
+    return;
+  }
+
+  els.searchResults.innerHTML = searchCandidates
+    .map(
+      (result, index) => `
+        <article class="search-result-card">
+          <h3>${result.title}</h3>
+          <div class="search-result-meta">${result.source} · <a href="${result.url}" target="_blank" rel="noreferrer">${result.url}</a></div>
+          <p>${result.snippet || "无摘要，加入客户池后需人工核验。"}</p>
+          <div class="detail-actions">
+            <button class="secondary-button" data-add-search-result="${index}" type="button">加入客户池</button>
+          </div>
+        </article>
+      `,
+    )
+    .join("");
+
+  document.querySelectorAll("[data-add-search-result]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const result = searchCandidates[Number(button.dataset.addSearchResult)];
+      const lead = searchTools.convertResultToLead(result, {
+        id: nextLeadId(),
+        country: els.countryInput.value,
+        buyerType: els.buyerInput.value,
+        product: els.productInput.value,
+      });
+      const mergeResult = v03.mergeImportedLeads(leads, [lead], nextLeadId());
+      leads = mergeResult.leads;
+      selectedId = mergeResult.leads.find((item) => item.website === lead.website)?.id || selectedId;
+      els.searchStatus.textContent = `已加入 ${mergeResult.added} 个客户`;
+      saveWorkspace();
+      render();
+    });
+  });
+}
+
+async function runInternetSearch() {
+  const provider = els.searchProvider.value;
+  const apiKey = els.searchApiKey.value.trim();
+  const query = els.searchQuery.value.trim();
+  const searchEngineId = els.searchEngineId.value.trim();
+
+  if (!apiKey || !query) {
+    els.searchStatus.textContent = "请填写 API Key 和搜索关键词";
+    return;
+  }
+
+  if (provider === "google" && !searchEngineId) {
+    els.searchStatus.textContent = "Google 需要填写 CX";
+    return;
+  }
+
+  els.searchStatus.textContent = "搜索中";
+  try {
+    const url = searchTools.buildSearchUrl({ provider, apiKey, query, searchEngineId });
+    const response = await fetch(url, {
+      headers: provider === "bing" ? { "Ocp-Apim-Subscription-Key": apiKey } : {},
+    });
+
+    if (!response.ok) {
+      throw new Error(`搜索接口返回 ${response.status}`);
+    }
+
+    const payload = await response.json();
+    searchCandidates = searchTools.normalizeSearchResults(provider, payload);
+    els.searchStatus.textContent = `发现 ${searchCandidates.length} 条结果`;
+    renderSearchResults();
+  } catch (error) {
+    els.searchStatus.textContent = "搜索失败";
+    els.searchResults.innerHTML = `<p class="muted">搜索失败：${error.message}。如果浏览器跨域限制，请在 V1.3 使用后端搜索服务。</p>`;
+  }
+}
+
 function addManualLead(event) {
   event.preventDefault();
   const data = Object.fromEntries(new FormData(els.manualLeadForm).entries());
@@ -889,6 +976,7 @@ els.csvImport.addEventListener("change", importCsvFile);
 els.downloadTemplate.addEventListener("click", () => {
   downloadTextFile(v03.buildCsvTemplate(), "SkillHuoke-v0.3-import-template.csv");
 });
+els.runInternetSearch.addEventListener("click", runInternetSearch);
 els.resetWorkspace.addEventListener("click", () => {
   localStorage.removeItem(v02.storageKey);
   leads = [...initialLeads];
@@ -903,3 +991,4 @@ els.clearWorkflow.addEventListener("click", () => {
 });
 
 render();
+renderSearchResults();
