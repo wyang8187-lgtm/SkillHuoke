@@ -72,4 +72,33 @@ assert.match(bingUrl, /^https:\/\/api.bing.microsoft.com\/v7\.0\/search\?/);
 const serpUrl = buildSearchUrl({ provider: "serpapi", apiKey: "KEY", query: "joinery Australia" });
 assert.match(serpUrl, /^https:\/\/serpapi\.com\/search\.json\?/);
 
+const enrichedLead = convertResultToLead(
+  {
+    title: "Perth Cabinet Studio",
+    url: "https://perthcabinet.example",
+    snippet: "Custom cabinets for builders.",
+    source: "SkillHuoke Backend",
+    parseStatus: "parsed",
+    contact: {
+      emails: ["sales@perthcabinet.example"],
+      phones: ["+61 8 9000 0000"],
+      whatsapp: ["https://wa.me/61890000000"],
+      linkedin: ["https://www.linkedin.com/company/perth-cabinet-studio"],
+      contactPages: ["https://perthcabinet.example/contact"],
+    },
+  },
+  {
+    id: 31,
+    country: "Australia",
+    buyerType: "Builder",
+    product: "custom cabinetry",
+  },
+);
+
+assert.equal(enrichedLead.email, "sales@perthcabinet.example");
+assert.equal(enrichedLead.phone, "+61 8 9000 0000");
+assert.equal(enrichedLead.whatsappStatus, "https://wa.me/61890000000");
+assert.equal(enrichedLead.linkedin, "https://www.linkedin.com/company/perth-cabinet-studio");
+assert.match(enrichedLead.nextAction, /perthcabinet\.example\/contact/);
+
 console.log("v1.2B search tests passed");

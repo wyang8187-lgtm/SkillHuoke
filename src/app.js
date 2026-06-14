@@ -361,8 +361,7 @@ const els = {
   downloadTemplate: document.getElementById("downloadTemplate"),
   importStatus: document.getElementById("importStatus"),
   searchProvider: document.getElementById("searchProvider"),
-  searchApiKey: document.getElementById("searchApiKey"),
-  searchEngineId: document.getElementById("searchEngineId"),
+  searchEnrichContact: document.getElementById("searchEnrichContact"),
   searchQuery: document.getElementById("searchQuery"),
   runInternetSearch: document.getElementById("runInternetSearch"),
   searchResults: document.getElementById("searchResults"),
@@ -844,23 +843,37 @@ function downloadTextFile(content, filename, type = "text/csv;charset=utf-8") {
 
 function renderSearchResults() {
   if (!searchCandidates.length) {
-    els.searchResults.innerHTML = "<p class=\"muted\">暂无搜索结果。输入 API Key 后点击联网搜索。</p>";
+    els.searchResults.innerHTML = "<p class=\"muted\">暂无搜索结果。运行本地后端后点击联网搜索。</p>";
     return;
   }
 
   els.searchResults.innerHTML = searchCandidates
-    .map(
-      (result, index) => `
+    .map((result, index) => {
+      const contact = result.contact || {};
+      const emails = contact.emails?.join("、") || "待核验";
+      const phones = contact.phones?.join("、") || "待核验";
+      const whatsapp = contact.whatsapp?.join("、") || "未发现公开 WhatsApp";
+      const linkedin = contact.linkedin?.[0] || "";
+      const parseLabel = result.parseStatus === "parsed" ? "已解析 Contact" : "待人工核验";
+
+      return `
         <article class="search-result-card">
           <h3>${result.title}</h3>
           <div class="search-result-meta">${result.source} · <a href="${result.url}" target="_blank" rel="noreferrer">${result.url}</a></div>
           <p>${result.snippet || "无摘要，加入客户池后需人工核验。"}</p>
+          <div class="contact-signal-grid">
+            <span>${parseLabel}</span>
+            <span>邮箱：${emails}</span>
+            <span>电话：${phones}</span>
+            <span>WhatsApp：${whatsapp}</span>
+            <span>LinkedIn：${linkedin ? `<a href="${linkedin}" target="_blank" rel="noreferrer">已发现</a>` : "待核验"}</span>
+          </div>
           <div class="detail-actions">
             <button class="secondary-button" data-add-search-result="${index}" type="button">加入客户池</button>
           </div>
         </article>
-      `,
-    )
+      `;
+    })
     .join("");
 
   document.querySelectorAll("[data-add-search-result]").forEach((button) => {
@@ -884,38 +897,47 @@ function renderSearchResults() {
 
 async function runInternetSearch() {
   const provider = els.searchProvider.value;
-  const apiKey = els.searchApiKey.value.trim();
   const query = els.searchQuery.value.trim();
-  const searchEngineId = els.searchEngineId.value.trim();
 
-  if (!apiKey || !query) {
-    els.searchStatus.textContent = "请填写 API Key 和搜索关键词";
-    return;
-  }
-
-  if (provider === "google" && !searchEngineId) {
-    els.searchStatus.textContent = "Google 需要填写 CX";
+  if (!query) {
+    els.searchStatus.textContent = "请填写搜索关键词";
     return;
   }
 
   els.searchStatus.textContent = "搜索中";
   try {
-    const url = searchTools.buildSearchUrl({ provider, apiKey, query, searchEngineId });
-    const response = await fetch(url, {
-      headers: provider === "bing" ? { "Ocp-Apim-Subscription-Key": apiKey } : {},
+    const response = await fetch("/api/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        provider,
+        query,
+        country: els.countryInput.value,
+        buyerType: els.buyerInput.value,
+        product: els.productInput.value,
+        enrichContact: els.searchEnrichContact.checked,
+      }),
     });
 
     if (!response.ok) {
-      throw new Error(`搜索接口返回 ${response.status}`);
+      const errorPayload = await response.json().catch(() => ({}));
+      throw new Error(errorPayload.error || `搜索接口返回 ${response.status}`);
     }
 
     const payload = await response.json();
-    searchCandidates = searchTools.normalizeSearchResults(provider, payload);
+    searchCandidates = (payload.results || []).map((result) => ({
+      title: result.company,
+      url: result.website,
+      snippet: result.snippet,
+      source: result.source,
+      contact: result.contact,
+      parseStatus: result.parseStatus,
+    }));
     els.searchStatus.textContent = `发现 ${searchCandidates.length} 条结果`;
     renderSearchResults();
   } catch (error) {
     els.searchStatus.textContent = "搜索失败";
-    els.searchResults.innerHTML = `<p class="muted">搜索失败：${error.message}。如果浏览器跨域限制，请在 V1.3 使用后端搜索服务。</p>`;
+    els.searchResults.innerHTML = `<p class="muted">搜索失败：${error.message}。请确认已用 npm start 启动 V1.3 后端，并在 .env 配置搜索 API Key。</p>`;
   }
 }
 

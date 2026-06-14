@@ -52,6 +52,12 @@ export function convertResultToLead(result, { id, country, buyerType, product })
   const company = stripCompanySuffix(result.title) || hostFromUrl(result.url);
   const website = clean(result.url);
   const rootWebsite = hostFromUrl(website);
+  const contact = result.contact || {};
+  const email = contact.emails?.[0] || "待补全";
+  const phone = contact.phones?.[0] || "待官网 Contact 页面核验";
+  const whatsapp = contact.whatsapp?.[0] || "";
+  const linkedin = contact.linkedin?.[0] || `https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(company)}`;
+  const contactPage = contact.contactPages?.[0] || "";
 
   return {
     id,
@@ -64,18 +70,22 @@ export function convertResultToLead(result, { id, country, buyerType, product })
     mainProducts: result.snippet || "公开搜索结果，需人工核验主营业务。",
     productMatch: `搜索结果与 ${product || "目标产品"} 存在关键词相关，需核验真实匹配度。`,
     summary: result.snippet || `${company} 来自公开搜索结果。`,
-    whatsappStatus: "未公开WhatsApp",
-    phone: "待官网 Contact 页面核验",
-    emailStatus: "待核验",
-    email: "待补全",
-    linkedin: `https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(company)}`,
+    whatsappStatus: whatsapp || "未公开WhatsApp",
+    phone,
+    emailStatus: email === "待补全" ? "待核验" : "已发现公开邮箱",
+    email,
+    linkedin,
     contactPerson: "未公开",
     title: "待 LinkedIn / 官网核验",
     score: 72,
     priority: "B",
     crmStatus: "New",
-    nextAction: "打开官网和 LinkedIn，核验联系人、邮箱、电话和客户类型。",
-    followNote: "搜索发现：Google/Bing/SerpAPI 公开结果，加入后需人工核验官网、联系人和联系方式。",
+    nextAction: contactPage
+      ? `打开 Contact 页面继续核验：${contactPage}`
+      : "打开官网和 LinkedIn，核验联系人、邮箱、电话和客户类型。",
+    followNote: result.parseStatus === "parsed"
+      ? "后端已解析官网 Contact 页面，联系方式仍需人工核验后再开发。"
+      : "搜索发现：Google/Bing/SerpAPI 公开结果，加入后需人工核验官网、联系人和联系方式。",
     scoreBreakdown: [22, 15, 12, 8, 8, 7],
     selectedTemplateId: "first-touch",
     tags: ["搜索发现", "待核验"],

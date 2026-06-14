@@ -31,7 +31,7 @@
       <section class="main-content">
       <header class="topbar">
         <div>
-          <p class="eyebrow">SkillHuoke v1.2B</p>
+          <p class="eyebrow">SkillHuoke v1.3</p>
           <h1>外贸客户智能运营中台</h1>
           <p class="topbar-subtitle">输入产品、国家、客户类型和数量，让工作流生成客户池、开发话术和 CRM 跟进动作。</p>
         </div>
@@ -153,7 +153,7 @@
         <div class="section-title">
           <div>
             <h2>搜索引擎入口</h2>
-            <p class="section-subtitle">输入 API Key 和搜索词，从公开搜索结果生成候选客户，再人工加入客户池。</p>
+            <p class="section-subtitle">本地后端读取 API Key，搜索公开网页并解析官网 Contact 页面，再生成候选客户。</p>
           </div>
           <span id="searchStatus" class="status-pill status-running">等待搜索</span>
         </div>
@@ -166,17 +166,13 @@
               <option value="serpapi">SerpAPI</option>
             </select>
           </label>
-          <label>
-            API Key
-            <input id="searchApiKey" type="password" placeholder="仅本机测试使用，正式版放后端" />
-          </label>
-          <label>
-            Google CX
-            <input id="searchEngineId" placeholder="Google Custom Search Engine ID" />
-          </label>
           <label class="wide-field">
             搜索关键词
             <input id="searchQuery" value="custom cabinetry Australia builder contact" />
+          </label>
+          <label class="check-field">
+            <input id="searchEnrichContact" type="checkbox" checked />
+            解析官网 Contact 页面
           </label>
           <button id="runInternetSearch" class="primary-button" type="button">联网搜索</button>
         </div>

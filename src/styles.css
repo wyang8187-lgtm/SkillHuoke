@@ -235,7 +235,18 @@ h2 {
   align-items: end;
   display: grid;
   gap: 12px;
-  grid-template-columns: minmax(150px, 0.8fr) minmax(180px, 1fr) minmax(180px, 1fr) minmax(260px, 1.4fr) auto;
+  grid-template-columns: minmax(150px, 0.8fr) minmax(280px, 1.6fr) minmax(180px, 0.9fr) auto;
+}
+
+.check-field {
+  align-items: center;
+  flex-direction: row;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.check-field input {
+  width: auto;
 }
 
 .search-results {
@@ -262,6 +273,23 @@ h2 {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.5;
+}
+
+.contact-signal-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 4px;
+}
+
+.contact-signal-grid span {
+  background: #f7f9fc;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: #334155;
+  font-size: 12px;
+  line-height: 1.45;
+  padding: 8px 10px;
 }
 
 .field-list {
