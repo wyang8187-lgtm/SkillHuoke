@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "start": "node scripts/serve.mjs",
-    "test": "node src/workflow-engine.test.mjs",
+    "test": "node src/workflow-engine.test.mjs && node src/github-pages.test.mjs",
     "check": "node --check src/app.js && node --check src/workflow-engine.js && node --check scripts/serve.mjs"
   },
   "keywords": [
@@ -18,4 +18,3 @@
     "export-sales"
   ]
 }
-
