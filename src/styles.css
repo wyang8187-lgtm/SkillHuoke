@@ -1,15 +1,17 @@
 :root {
-  --bg: #f5f7f8;
+  --bg: #eef7f8;
   --panel: #ffffff;
-  --text: #1f2933;
-  --muted: #62717f;
-  --line: #d9e2e8;
-  --brand: #0f5b5b;
-  --brand-2: #1f7a6d;
+  --panel-soft: #f8fcfd;
+  --text: #17212b;
+  --muted: #5b6f7c;
+  --line: #d6e5ea;
+  --brand: #067a7a;
+  --brand-2: #0ea5a5;
   --blue: #2563eb;
-  --green: #16794c;
-  --amber: #a05a00;
-  --red: #b42318;
+  --green: #168756;
+  --amber: #b7791f;
+  --red: #c24135;
+  --shadow: 0 12px 30px rgba(16, 87, 101, 0.08);
 }
 
 * {
@@ -18,7 +20,7 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  background: linear-gradient(180deg, #f7fdff 0%, var(--bg) 360px);
   color: var(--text);
   font-family: "Microsoft YaHei", "Segoe UI", Arial, sans-serif;
 }
@@ -32,10 +34,10 @@ textarea {
 
 .app-shell {
   display: grid;
-  gap: 16px;
-  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 18px;
+  grid-template-columns: 238px minmax(0, 1fr);
   min-height: 100vh;
-  padding: 20px;
+  padding: 22px;
 }
 
 .main-content {
@@ -44,15 +46,17 @@ textarea {
 
 .sidebar {
   align-self: start;
-  background: #123b3b;
-  border-radius: 8px;
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  color: var(--text);
   display: grid;
   gap: 20px;
-  min-height: calc(100vh - 40px);
+  min-height: calc(100vh - 44px);
   padding: 18px;
   position: sticky;
-  top: 20px;
+  top: 22px;
 }
 
 .brand-lockup {
@@ -63,19 +67,20 @@ textarea {
 
 .brand-mark {
   align-items: center;
-  background: #f8fafc;
-  border-radius: 8px;
-  color: var(--brand);
+  background: var(--brand);
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(6, 122, 122, 0.18);
+  color: #ffffff;
   display: inline-flex;
   font-weight: 900;
-  height: 36px;
+  height: 40px;
   justify-content: center;
-  width: 36px;
+  width: 40px;
 }
 
 .brand-lockup span,
 .sidebar-note span {
-  color: #cde7e3;
+  color: var(--muted);
   display: block;
   font-size: 12px;
   margin-top: 2px;
@@ -87,21 +92,26 @@ textarea {
 }
 
 .nav-list a {
-  border-radius: 6px;
-  color: #effaf8;
+  border-radius: 8px;
+  color: #244350;
   font-weight: 700;
-  padding: 9px 10px;
+  padding: 10px 11px;
   text-decoration: none;
 }
 
 .nav-list a:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: #e8f7f7;
+  color: var(--brand);
   text-decoration: none;
 }
 
 .sidebar-note {
   align-self: end;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  background: #f0fbfb;
+  border: 1px solid #ccebec;
+  border-radius: 10px;
+  color: #244350;
+  padding: 12px;
   padding-top: 14px;
 }
 
@@ -113,7 +123,8 @@ textarea {
 .detail-panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
 }
 
 .topbar {
@@ -121,7 +132,7 @@ textarea {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 18px 20px;
+  padding: 22px 24px;
 }
 
 .topbar-subtitle,
@@ -144,7 +155,9 @@ textarea {
   margin: 0 0 4px;
   color: var(--brand);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 h1,
@@ -155,7 +168,7 @@ p {
 
 h1 {
   margin-bottom: 0;
-  font-size: 24px;
+  font-size: 26px;
 }
 
 h2 {
@@ -166,21 +179,28 @@ h2 {
 .primary-button,
 .secondary-button {
   border: 0;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   font-weight: 700;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .primary-button {
   background: var(--brand);
+  box-shadow: 0 8px 18px rgba(6, 122, 122, 0.18);
   color: #ffffff;
   padding: 10px 14px;
 }
 
 .secondary-button {
-  background: #e7f2ef;
+  background: #e7f7f7;
   color: var(--brand);
   padding: 8px 10px;
+}
+
+.primary-button:hover,
+.secondary-button:hover {
+  transform: translateY(-1px);
 }
 
 .task-panel {
@@ -210,9 +230,9 @@ h2 {
 }
 
 .csv-import-box {
-  background: #f8fafc;
+  background: var(--panel-soft);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   display: grid;
   gap: 12px;
   align-content: start;
@@ -220,9 +240,9 @@ h2 {
 }
 
 .import-status {
-  background: #eef5f5;
-  border-radius: 6px;
-  color: #264653;
+  background: #e8f7f7;
+  border-radius: 8px;
+  color: #155e63;
   font-size: 13px;
   font-weight: 700;
   line-height: 1.5;
@@ -260,9 +280,18 @@ select,
 textarea {
   width: 100%;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 8px;
   color: var(--text);
   padding: 9px 10px;
+  background: #ffffff;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--brand-2);
+  box-shadow: 0 0 0 3px rgba(14, 165, 165, 0.14);
+  outline: none;
 }
 
 textarea {
@@ -303,7 +332,7 @@ textarea {
 
 .keyword-pill,
 .step-pill {
-  background: #eef5f5;
+  background: #eefafa;
   border: 1px solid var(--line);
   border-radius: 999px;
   color: #264653;
@@ -327,8 +356,9 @@ textarea {
 .ops-card {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 14px;
+  box-shadow: 0 8px 20px rgba(16, 87, 101, 0.05);
 }
 
 .ops-card strong {
@@ -344,7 +374,7 @@ textarea {
 }
 
 .ops-step {
-  background: #e7f2ef;
+  background: #dcfafa;
   border-radius: 999px;
   color: var(--brand);
   display: inline-flex;
@@ -361,7 +391,7 @@ textarea {
 }
 
 .kpi {
-  padding: 14px;
+  padding: 16px;
 }
 
 .kpi span {
@@ -373,7 +403,8 @@ textarea {
 
 .kpi strong {
   display: block;
-  font-size: 28px;
+  color: var(--brand);
+  font-size: 30px;
   margin-top: 6px;
 }
 
@@ -402,7 +433,7 @@ textarea {
 
 .table-wrap {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: auto;
 }
 
@@ -421,8 +452,8 @@ td {
 }
 
 th {
-  background: #eef5f5;
-  color: #264653;
+  background: #edfafa;
+  color: #164e57;
   font-size: 12px;
   position: sticky;
   top: 0;
@@ -439,7 +470,7 @@ tr {
 
 tr:hover,
 tr.selected {
-  background: #eaf7f4;
+  background: #e8fbfb;
 }
 
 .company-cell strong,
@@ -487,8 +518,8 @@ tr.selected {
 }
 
 .status-running {
-  background: #e0f2fe;
-  color: #075985;
+  background: #dbeafe;
+  color: #1d4ed8;
 }
 
 .status-saved {
@@ -533,8 +564,9 @@ tr.selected {
 
 .detail-block {
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 12px;
+  background: #ffffff;
 }
 
 .detail-block h3 {
@@ -549,15 +581,15 @@ tr.selected {
 }
 
 .score-item {
-  background: #f8fafc;
-  border-radius: 6px;
+  background: var(--panel-soft);
+  border-radius: 8px;
   padding: 8px;
 }
 
 .message-box {
-  background: #f8fafc;
+  background: var(--panel-soft);
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 10px;
   color: #25313c;
   line-height: 1.45;
   padding: 10px;
@@ -581,7 +613,7 @@ tr.selected {
 
 .tag-chip {
   align-items: center;
-  background: #e7f2ef;
+  background: #e8f7f7;
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--brand);
@@ -602,9 +634,9 @@ tr.selected {
 }
 
 .quality-card {
-  background: #f8fafc;
+  background: var(--panel-soft);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 10px;
 }
 
@@ -657,8 +689,8 @@ tr.selected {
 
 .timeline-item {
   border-left: 3px solid var(--brand-2);
-  background: #f8fafc;
-  border-radius: 6px;
+  background: var(--panel-soft);
+  border-radius: 8px;
   padding: 8px 10px;
 }
 
