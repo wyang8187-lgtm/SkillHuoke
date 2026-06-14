@@ -1,4 +1,5 @@
-const crmStatuses = ["New", "Verified", "Contacted", "Replied", "Quoting", "Sample", "Negotiating", "Won", "Lost", "Not Fit"];
+const crmStatuses = ["New", "Verified", "Contacted", "Replied", "Quoting", "Won", "Lost"];
+const v02 = window.SkillV02;
 
 const initialLeads = [
   {
@@ -303,8 +304,9 @@ const initialLeads = [
   },
 ];
 
-let leads = [...initialLeads];
-let selectedId = leads[0].id;
+const savedWorkspace = loadWorkspace();
+let leads = v02.mergeSavedLeads([...initialLeads], savedWorkspace);
+let selectedId = savedWorkspace?.selectedId && leads.some((lead) => lead.id === savedWorkspace.selectedId) ? savedWorkspace.selectedId : leads[0].id;
 let currentKeywords = [
   "custom cabinetry Australia builder",
   "kitchen company Australia custom cabinets",
@@ -341,7 +343,43 @@ const els = {
   workflowSteps: document.getElementById("workflowSteps"),
   taskStatus: document.getElementById("taskStatus"),
   visibleSummary: document.getElementById("visibleSummary"),
+  saveStatus: document.getElementById("saveStatus"),
+  resetWorkspace: document.getElementById("resetWorkspace"),
 };
+
+if (savedWorkspace?.taskStatus) {
+  els.taskStatus.textContent = savedWorkspace.taskStatus;
+}
+
+function loadWorkspace() {
+  try {
+    const raw = localStorage.getItem(v02.storageKey);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveWorkspace() {
+  try {
+    localStorage.setItem(
+      v02.storageKey,
+      JSON.stringify(
+        v02.buildSavedState({
+          leads,
+          selectedId,
+          taskStatus: els.taskStatus.textContent,
+        }),
+      ),
+    );
+    els.saveStatus.textContent = "已保存";
+    window.setTimeout(() => {
+      els.saveStatus.textContent = "本地自动保存";
+    }, 1000);
+  } catch {
+    els.saveStatus.textContent = "保存失败";
+  }
+}
 
 function priorityClass(priorityValue) {
   return `priority-${priorityValue.toLowerCase()}`;
@@ -360,16 +398,7 @@ function channelClass(status) {
 }
 
 function firstEmail(lead) {
-  if (lead.firstEmail) return lead.firstEmail;
-  return `Subject: ${lead.company} and custom cabinetry supply
-
-Hi ${lead.company} team,
-
-I noticed that ${lead.company} works with ${lead.mainProducts}. We manufacture whole-house custom cabinetry, kitchen cabinets, wardrobes, wood doors, and export furniture for builders, designers, kitchen companies, and importers.
-
-Would it be useful if I send a short catalogue and capability sheet for cabinets, wardrobes, wood doors, and furniture packages?
-
-Best regards,`;
+  return v02.createTemplateMessage(lead.selectedTemplateId || "first-touch", lead, els.productInput?.value);
 }
 
 function whatsappOpener(lead) {
@@ -496,7 +525,22 @@ function renderDetail() {
     </div>
 
     <div class="detail-block">
-      <h3>首封英文开发信</h3>
+      <h3>开发信模板库</h3>
+      <label>
+        模板
+        <select id="templateEditor">
+          ${v02.templateLibrary
+            .map((template) => `<option value="${template.id}" ${template.id === (lead.selectedTemplateId || "first-touch") ? "selected" : ""}>${template.name}</option>`)
+            .join("")}
+        </select>
+      </label>
+      <p class="template-meta" id="templateDescription">${
+        v02.templateLibrary.find((template) => template.id === (lead.selectedTemplateId || "first-touch"))?.description || ""
+      }</p>
+    </div>
+
+    <div class="detail-block">
+      <h3>英文开发信</h3>
       <div class="message-box" id="emailCopy">${firstEmail(lead)}</div>
       <div class="detail-actions">
         <button class="secondary-button" data-copy="emailCopy" type="button">复制开发信</button>
@@ -514,11 +558,19 @@ function renderDetail() {
 
   document.getElementById("crmStatusEditor").addEventListener("change", (event) => {
     lead.crmStatus = event.target.value;
+    saveWorkspace();
     render();
   });
 
   document.getElementById("followNoteEditor").addEventListener("input", (event) => {
     lead.followNote = event.target.value;
+    saveWorkspace();
+  });
+
+  document.getElementById("templateEditor").addEventListener("change", (event) => {
+    lead.selectedTemplateId = event.target.value;
+    saveWorkspace();
+    render();
   });
 
   document.querySelectorAll("[data-copy]").forEach((button) => {
@@ -554,6 +606,7 @@ function runWorkflowFromInput() {
   els.buyerFilter.value = "";
   els.whatsappFilter.value = "";
   els.crmFilter.value = "";
+  saveWorkspace();
   render();
 }
 
@@ -579,58 +632,12 @@ async function copyText(text) {
 }
 
 function exportCsv() {
-  const headers = [
-    "公司名称",
-    "国家",
-    "城市",
-    "官网",
-    "客户类型",
-    "主营产品",
-    "WhatsApp状态",
-    "电话",
-    "邮箱状态",
-    "邮箱",
-    "LinkedIn",
-    "评分",
-    "优先级",
-    "CRM状态",
-    "首封英文开发信",
-    "WhatsApp开场白",
-    "来源链接",
-  ];
-
-  const lines = [headers.map(csvEscape).join(",")];
-  filteredLeads().forEach((lead) => {
-    lines.push(
-      [
-        lead.company,
-        lead.country,
-        lead.city,
-        lead.website,
-        lead.buyerType,
-        lead.mainProducts,
-        lead.whatsappStatus,
-        lead.phone,
-        lead.emailStatus,
-        lead.email,
-        lead.linkedin,
-        lead.score,
-        lead.priority,
-        lead.crmStatus,
-        firstEmail(lead),
-        whatsappOpener(lead),
-        lead.source,
-      ]
-        .map(csvEscape)
-        .join(","),
-    );
-  });
-
-  const blob = new Blob([`\uFEFF${lines.join("\n")}`], { type: "text/csv;charset=utf-8" });
+  const csv = v02.buildCsv(filteredLeads(), { product: els.productInput.value });
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "skillhuoke1-leads.csv";
+  link.download = "SkillHuoke-v0.2-customers.csv";
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -649,6 +656,14 @@ function render() {
 
 els.exportCsv.addEventListener("click", exportCsv);
 els.runWorkflow.addEventListener("click", runWorkflowFromInput);
+els.resetWorkspace.addEventListener("click", () => {
+  localStorage.removeItem(v02.storageKey);
+  leads = [...initialLeads];
+  selectedId = leads[0].id;
+  els.taskStatus.textContent = "示例任务";
+  saveWorkspace();
+  render();
+});
 els.clearWorkflow.addEventListener("click", () => {
   els.workflowInstruction.value = "";
   els.workflowInstruction.focus();

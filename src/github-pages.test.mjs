@@ -11,5 +11,6 @@ assert.equal(fs.existsSync(indexPath), true, "root index.html should exist for G
 const html = fs.readFileSync(indexPath, "utf8");
 
 assert.match(html, /href="\.\/src\/styles\.css"/, "root index should load CSS from src");
+assert.match(html, /src="\.\/src\/v02-tools\.js"/, "root index should load v0.2 tools from src");
 assert.match(html, /src="\.\/src\/workflow-engine\.js"/, "root index should load workflow engine from src");
 assert.match(html, /src="\.\/src\/app\.js"/, "root index should load app script from src");

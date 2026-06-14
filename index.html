@@ -31,12 +31,14 @@
       <section class="main-content">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Skill获客 MVP</p>
+          <p class="eyebrow">SkillHuoke v0.2</p>
           <h1>外贸客户智能运营中台</h1>
           <p class="topbar-subtitle">输入产品、国家、客户类型和数量，让工作流生成客户池、开发话术和 CRM 跟进动作。</p>
         </div>
         <div class="topbar-actions">
           <span id="taskStatus" class="status-pill status-running">示例任务</span>
+          <span id="saveStatus" class="status-pill status-saved">本地自动保存</span>
+          <button id="resetWorkspace" class="secondary-button" type="button">重置本地数据</button>
           <button id="exportCsv" class="primary-button" type="button">导出当前客户 CSV</button>
         </div>
       </header>
@@ -219,6 +221,7 @@
       </section>
     </main>
 
+    <script src="./src/v02-tools.js"></script>
     <script src="./src/workflow-engine.js"></script>
     <script src="./src/app.js"></script>
   </body>

@@ -449,6 +449,11 @@ tr.selected {
   color: #075985;
 }
 
+.status-saved {
+  background: #dcfce7;
+  color: #166534;
+}
+
 .priority-a {
   background: #dcfce7;
   color: #166534;
@@ -515,6 +520,13 @@ tr.selected {
   line-height: 1.45;
   padding: 10px;
   white-space: pre-wrap;
+}
+
+.template-meta {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 6px 0 0;
 }
 
 .detail-actions {
