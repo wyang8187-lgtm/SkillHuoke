@@ -3,6 +3,7 @@ const v02 = window.SkillV02;
 const v03 = window.SkillV03;
 const v04 = window.SkillV04;
 const v10 = window.SkillV10;
+const v11 = window.SkillV11;
 
 const initialLeads = [
   {
@@ -498,7 +499,7 @@ function renderDetail() {
   const scoreLabels = ["产品匹配", "客户类型", "市场", "联系方式", "来源", "潜力"];
   const quality = v04.dataQuality(lead);
   const authenticity = v10.authenticityScore(lead, els.productInput?.value);
-  const developmentPlan = v10.buildDevelopmentPlan(lead, authenticity);
+  const developmentPlan = v11.buildEnhancedDevelopmentPlan(lead, authenticity, els.productInput?.value);
   const tags = lead.tags || [];
   const followUps = lead.followUps || [];
   els.detailContent.innerHTML = `
@@ -557,11 +558,12 @@ function renderDetail() {
     </div>
 
     <div class="detail-block">
-      <h3>v0.9 开发动作建议</h3>
+      <h3>v1.1 开发动作建议</h3>
       <p><strong>建议渠道</strong>${developmentPlan.channel}</p>
+      <p><strong>优先联系人</strong>${developmentPlan.contacts.join(" / ")}</p>
       <p><strong>开场判断</strong>${developmentPlan.opening}</p>
       <ul class="dev-actions">
-        ${developmentPlan.actions.map((item) => `<li>${item}</li>`).join("")}
+        ${developmentPlan.steps.map((item) => `<li>${item}</li>`).join("")}
       </ul>
     </div>
 
