@@ -322,6 +322,32 @@ textarea {
   padding-top: 14px;
 }
 
+.strategy-panel {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  margin-top: 14px;
+  padding-top: 14px;
+}
+
+.strategy-list {
+  display: grid;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.strategy-item {
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: #244350;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+  padding: 8px 10px;
+}
+
 .keyword-list,
 .workflow-steps {
   display: flex;
@@ -640,6 +666,45 @@ tr.selected {
   padding: 10px;
 }
 
+.auth-card {
+  background: #f0fbfb;
+  border: 1px solid #ccebec;
+  border-radius: 12px;
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.auth-score {
+  align-items: baseline;
+  display: flex;
+  gap: 8px;
+}
+
+.auth-score strong {
+  color: var(--brand);
+  display: inline;
+  font-size: 30px;
+}
+
+.auth-reasons,
+.auth-risks,
+.dev-actions {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+.auth-reasons li,
+.dev-actions li {
+  color: #22543d;
+}
+
+.auth-risks li {
+  color: #9a3412;
+}
+
 .quality-level {
   font-size: 18px;
   font-weight: 900;
@@ -719,6 +784,7 @@ a:hover {
   .toolbar,
   .workspace,
   .workflow-output,
+  .strategy-panel,
   .import-grid,
   .manual-form,
   .operations-grid,

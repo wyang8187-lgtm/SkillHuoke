@@ -10,10 +10,11 @@ assert.equal(fs.existsSync(indexPath), true, "root index.html should exist for G
 
 const html = fs.readFileSync(indexPath, "utf8");
 
-assert.match(html, /SkillHuoke v0\.5/, "root index should show v0.5 version");
+assert.match(html, /SkillHuoke v1\.0 Preview/, "root index should show v1.0 Preview version");
 assert.match(html, /href="\.\/src\/styles\.css"/, "root index should load CSS from src");
 assert.match(html, /src="\.\/src\/v02-tools\.js"/, "root index should load v0.2 tools from src");
 assert.match(html, /src="\.\/src\/v03-tools\.js"/, "root index should load v0.3 tools from src");
 assert.match(html, /src="\.\/src\/v04-tools\.js"/, "root index should load v0.4 tools from src");
+assert.match(html, /src="\.\/src\/v10-tools\.js"/, "root index should load v1.0 tools from src");
 assert.match(html, /src="\.\/src\/workflow-engine\.js"/, "root index should load workflow engine from src");
 assert.match(html, /src="\.\/src\/app\.js"/, "root index should load app script from src");

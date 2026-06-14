@@ -2,6 +2,7 @@ const crmStatuses = ["New", "Verified", "Contacted", "Replied", "Quoting", "Won"
 const v02 = window.SkillV02;
 const v03 = window.SkillV03;
 const v04 = window.SkillV04;
+const v10 = window.SkillV10;
 
 const initialLeads = [
   {
@@ -343,6 +344,8 @@ const els = {
   quantityInput: document.getElementById("quantityInput"),
   keywordList: document.getElementById("keywordList"),
   workflowSteps: document.getElementById("workflowSteps"),
+  googleStrategy: document.getElementById("googleStrategy"),
+  verificationRules: document.getElementById("verificationRules"),
   taskStatus: document.getElementById("taskStatus"),
   visibleSummary: document.getElementById("visibleSummary"),
   saveStatus: document.getElementById("saveStatus"),
@@ -494,6 +497,8 @@ function renderDetail() {
 
   const scoreLabels = ["产品匹配", "客户类型", "市场", "联系方式", "来源", "潜力"];
   const quality = v04.dataQuality(lead);
+  const authenticity = v10.authenticityScore(lead, els.productInput?.value);
+  const developmentPlan = v10.buildDevelopmentPlan(lead, authenticity);
   const tags = lead.tags || [];
   const followUps = lead.followUps || [];
   els.detailContent.innerHTML = `
@@ -527,6 +532,37 @@ function renderDetail() {
         </div>
         <p class="template-meta">${quality.suggestions.join(" ")}</p>
       </div>
+    </div>
+
+    <div class="detail-block">
+      <h3>v0.6 真实性评分</h3>
+      <div class="auth-card">
+        <div class="auth-score">
+          <strong>${authenticity.score}</strong>
+          <span>${authenticity.level} · ${developmentPlan.stage}</span>
+        </div>
+        <div>
+          <strong>可信原因</strong>
+          <ul class="auth-reasons">
+            ${authenticity.reasons.length ? authenticity.reasons.map((item) => `<li>${item}</li>`).join("") : "<li>暂无强可信信号。</li>"}
+          </ul>
+        </div>
+        <div>
+          <strong>风险信号</strong>
+          <ul class="auth-risks">
+            ${authenticity.risks.length ? authenticity.risks.map((item) => `<li>${item}</li>`).join("") : "<li>暂无明显风险。</li>"}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-block">
+      <h3>v0.9 开发动作建议</h3>
+      <p><strong>建议渠道</strong>${developmentPlan.channel}</p>
+      <p><strong>开场判断</strong>${developmentPlan.opening}</p>
+      <ul class="dev-actions">
+        ${developmentPlan.actions.map((item) => `<li>${item}</li>`).join("")}
+      </ul>
     </div>
 
     <div class="detail-block">
@@ -701,8 +737,17 @@ function renderDetail() {
 }
 
 function renderWorkflowOutput() {
+  const strategy = v10.buildSearchStrategy({
+    product: els.productInput.value,
+    country: els.countryInput.value,
+    buyerTypes: els.buyerInput.value.split(/\s*\+\s*/).filter(Boolean),
+  });
   els.keywordList.innerHTML = currentKeywords.map((keyword) => `<span class="keyword-pill">${keyword}</span>`).join("");
   els.workflowSteps.innerHTML = currentSteps.map((step) => `<span class="step-pill">${step} ✅</span>`).join("");
+  els.googleStrategy.innerHTML = [...strategy.googleQueries, ...strategy.linkedinQueries.slice(0, 2)]
+    .map((item) => `<div class="strategy-item">${item}</div>`)
+    .join("");
+  els.verificationRules.innerHTML = strategy.verificationRules.map((item) => `<div class="strategy-item">${item}</div>`).join("");
 }
 
 function runWorkflowFromInput() {
