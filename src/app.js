@@ -1,6 +1,7 @@
 const crmStatuses = ["New", "Verified", "Contacted", "Replied", "Quoting", "Won", "Lost"];
 const v02 = window.SkillV02;
 const v03 = window.SkillV03;
+const v04 = window.SkillV04;
 
 const initialLeads = [
   {
@@ -492,6 +493,9 @@ function renderDetail() {
   els.detailPriority.className = `status-pill ${priorityClass(lead.priority)}`;
 
   const scoreLabels = ["产品匹配", "客户类型", "市场", "联系方式", "来源", "潜力"];
+  const quality = v04.dataQuality(lead);
+  const tags = lead.tags || [];
+  const followUps = lead.followUps || [];
   els.detailContent.innerHTML = `
     <div class="detail-block">
       <h3>公司信息</h3>
@@ -511,11 +515,86 @@ function renderDetail() {
     </div>
 
     <div class="detail-block">
+      <h3>数据质量</h3>
+      <div class="quality-card">
+        <div>信息完整度：<span class="quality-level quality-${quality.level}">${quality.level}</span></div>
+        <div class="quality-list">
+          ${
+            quality.missingFields.length
+              ? quality.missingFields.map((field) => `<span class="quality-issue">缺 ${field}</span>`).join("")
+              : "<span class=\"tag-chip\">资料较完整</span>"
+          }
+        </div>
+        <p class="template-meta">${quality.suggestions.join(" ")}</p>
+      </div>
+    </div>
+
+    <div class="detail-block">
+      <h3>客户标签</h3>
+      <div class="tag-list">
+        ${tags.length ? tags.map((tag) => `<span class="tag-chip">${tag}<button type="button" data-remove-tag="${tag}">×</button></span>`).join("") : "<span class=\"muted\">暂无标签</span>"}
+      </div>
+      <div class="tag-picker">
+        ${v04.defaultTags.map((tag) => `<button class="secondary-button" data-add-tag="${tag}" type="button">${tag}</button>`).join("")}
+      </div>
+    </div>
+
+    <div class="detail-block">
       <h3>评分拆解</h3>
       <div class="score-grid">
         ${lead.scoreBreakdown
           .map((value, index) => `<div class="score-item"><strong>${scoreLabels[index]}</strong><span>${value} 分</span></div>`)
           .join("")}
+      </div>
+    </div>
+
+    <div class="detail-block">
+      <h3>跟进记录</h3>
+      <form id="followUpForm" class="follow-form">
+        <div class="follow-grid">
+          <label>
+            跟进方式
+            <select name="channel">
+              <option>Email</option>
+              <option>WhatsApp</option>
+              <option>Phone</option>
+              <option>LinkedIn</option>
+              <option>Meeting</option>
+            </select>
+          </label>
+          <label>
+            跟进结果
+            <input name="result" placeholder="Waiting / Replied / Need quote" />
+          </label>
+        </div>
+        <label>
+          跟进内容
+          <textarea name="content" required placeholder="记录本次联系内容"></textarea>
+        </label>
+        <label>
+          下一步动作
+          <input name="nextAction" placeholder="3天后跟进 / 发送报价 / 核验WhatsApp" />
+        </label>
+        <button class="secondary-button" type="submit">添加跟进记录</button>
+      </form>
+      <div class="timeline">
+        ${
+          followUps.length
+            ? followUps
+                .slice()
+                .reverse()
+                .map(
+                  (item) => `
+                    <div class="timeline-item">
+                      <strong>${item.date} · ${item.channel}</strong>
+                      <p>${item.content}</p>
+                      <p class="muted">结果：${item.result || "未填写"} · 下一步：${item.nextAction || "未填写"}</p>
+                    </div>
+                  `,
+                )
+                .join("")
+            : "<p class=\"muted\">暂无跟进记录。</p>"
+        }
       </div>
     </div>
 
@@ -578,6 +657,33 @@ function renderDetail() {
 
   document.getElementById("templateEditor").addEventListener("change", (event) => {
     lead.selectedTemplateId = event.target.value;
+    saveWorkspace();
+    render();
+  });
+
+  document.querySelectorAll("[data-add-tag]").forEach((button) => {
+    button.addEventListener("click", () => {
+      Object.assign(lead, v04.addTag(lead, button.dataset.addTag));
+      saveWorkspace();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-remove-tag]").forEach((button) => {
+    button.addEventListener("click", () => {
+      Object.assign(lead, v04.removeTag(lead, button.dataset.removeTag));
+      saveWorkspace();
+      render();
+    });
+  });
+
+  document.getElementById("followUpForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
+    lead.followUps = [...(lead.followUps || []), v04.createFollowUp(payload)];
+    if (payload.nextAction) lead.nextAction = payload.nextAction;
+    if (payload.result && /replied|回复/i.test(payload.result)) lead.crmStatus = "Replied";
+    if (/quote|报价/i.test(`${payload.result} ${payload.nextAction}`)) lead.crmStatus = "Quoting";
     saveWorkspace();
     render();
   });
@@ -675,10 +781,13 @@ function addManualLead(event) {
     return;
   }
 
+  const issues = v04.validateLeadInput(manualLead);
   const result = v03.mergeImportedLeads(leads, [manualLead], nextLeadId());
   leads = result.leads;
   selectedId = result.leads.find((lead) => lead.company === manualLead.company)?.id || selectedId;
-  els.importStatus.textContent = `手动录入完成：新增 ${result.added} 个，补全 ${result.updated} 个，跳过 ${result.skipped} 个。`;
+  els.importStatus.textContent = `手动录入完成：新增 ${result.added} 个，补全 ${result.updated} 个，跳过 ${result.skipped} 个。${
+    issues.length ? ` 需核验：${issues.map((item) => item.field).join("、")}` : " 数据质量良好。"
+  }`;
   els.manualLeadForm.reset();
   els.manualLeadForm.elements.country.value = "Australia";
   els.taskStatus.textContent = "真实客户名单已更新";
@@ -692,10 +801,11 @@ async function importCsvFile(event) {
 
   const text = await file.text();
   const imported = v03.parseCustomerCsv(text, nextLeadId());
+  const issueCount = imported.reduce((count, lead) => count + v04.validateLeadInput(lead).length, 0);
   const result = v03.mergeImportedLeads(leads, imported, nextLeadId());
   leads = result.leads;
   selectedId = result.leads.at(-1)?.id || selectedId;
-  els.importStatus.textContent = `CSV 导入完成：新增 ${result.added} 个，补全 ${result.updated} 个，跳过重复 ${result.skipped} 个。`;
+  els.importStatus.textContent = `CSV 导入完成：新增 ${result.added} 个，补全 ${result.updated} 个，跳过重复 ${result.skipped} 个。数据提醒 ${issueCount} 条。`;
   els.taskStatus.textContent = "真实客户名单已导入";
   els.csvImport.value = "";
   saveWorkspace();

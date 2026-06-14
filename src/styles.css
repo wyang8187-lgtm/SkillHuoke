@@ -571,6 +571,101 @@ tr.selected {
   margin: 6px 0 0;
 }
 
+.tag-list,
+.tag-picker,
+.quality-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.tag-chip {
+  align-items: center;
+  background: #e7f2ef;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--brand);
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 800;
+  gap: 6px;
+  padding: 5px 8px;
+}
+
+.tag-chip button {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 900;
+  padding: 0;
+}
+
+.quality-card {
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.quality-level {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.quality-高 {
+  color: var(--green);
+}
+
+.quality-中 {
+  color: var(--amber);
+}
+
+.quality-低 {
+  color: var(--red);
+}
+
+.quality-list {
+  margin-top: 8px;
+}
+
+.quality-issue {
+  background: #fff7ed;
+  border-radius: 999px;
+  color: #9a3412;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 8px;
+}
+
+.follow-form {
+  display: grid;
+  gap: 8px;
+}
+
+.follow-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.timeline {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.timeline-item {
+  border-left: 3px solid var(--brand-2);
+  background: #f8fafc;
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.timeline-item strong {
+  display: inline;
+}
+
 .detail-actions {
   display: flex;
   flex-wrap: wrap;
