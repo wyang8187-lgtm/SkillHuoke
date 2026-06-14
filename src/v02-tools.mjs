@@ -69,6 +69,7 @@ export function buildSavedState({ leads, selectedId, taskStatus }) {
     savedAt: new Date().toISOString(),
     selectedId,
     taskStatus,
+    leads,
     leadUpdates: leads.map((lead) => ({
       id: lead.id,
       crmStatus: lead.crmStatus,
@@ -79,6 +80,9 @@ export function buildSavedState({ leads, selectedId, taskStatus }) {
 }
 
 export function mergeSavedLeads(baseLeads, savedState) {
+  if (savedState?.leads?.length) {
+    return savedState.leads;
+  }
   const updates = new Map((savedState?.leadUpdates || []).map((lead) => [lead.id, lead]));
   return baseLeads.map((lead) => ({
     ...lead,

@@ -107,6 +107,7 @@ textarea {
 
 .topbar,
 .task-panel,
+.import-panel,
 .kpi,
 .lead-area,
 .detail-panel {
@@ -185,6 +186,47 @@ h2 {
 .task-panel {
   margin-top: 14px;
   padding: 16px;
+}
+
+.import-panel {
+  margin-top: 14px;
+  padding: 16px;
+}
+
+.import-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 2fr) minmax(260px, 0.8fr);
+}
+
+.manual-form {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.wide-field {
+  grid-column: span 3;
+}
+
+.csv-import-box {
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  padding: 12px;
+}
+
+.import-status {
+  background: #eef5f5;
+  border-radius: 6px;
+  color: #264653;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+  padding: 10px;
 }
 
 .section-title {
@@ -550,9 +592,15 @@ a:hover {
   .toolbar,
   .workspace,
   .workflow-output,
+  .import-grid,
+  .manual-form,
   .operations-grid,
   .kpi-grid {
     grid-template-columns: 1fr;
+  }
+
+  .wide-field {
+    grid-column: auto;
   }
 
   .sidebar {

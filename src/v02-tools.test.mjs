@@ -43,6 +43,10 @@ const savedState = buildSavedState({
   taskStatus: "v0.2 saved",
 });
 
+const restoredSnapshot = mergeSavedLeads([], savedState);
+assert.equal(restoredSnapshot[0].company, "Kinsman Kitchens");
+assert.equal(restoredSnapshot[0].crmStatus, "Contacted");
+
 const merged = mergeSavedLeads([{ ...lead }], savedState);
 assert.equal(merged[0].crmStatus, "Contacted");
 assert.equal(merged[0].followNote, "已发 WhatsApp");

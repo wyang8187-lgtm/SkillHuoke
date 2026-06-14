@@ -31,7 +31,7 @@
       <section class="main-content">
       <header class="topbar">
         <div>
-          <p class="eyebrow">SkillHuoke v0.2</p>
+          <p class="eyebrow">SkillHuoke v0.3</p>
           <h1>外贸客户智能运营中台</h1>
           <p class="topbar-subtitle">输入产品、国家、客户类型和数量，让工作流生成客户池、开发话术和 CRM 跟进动作。</p>
         </div>
@@ -113,6 +113,41 @@
           <strong>CRM 跟进</strong>
           <p>把客户状态推进到 Contacted、Replied、Quoting 或 Won。</p>
         </article>
+      </section>
+
+      <section id="import" class="import-panel" aria-label="真实客户导入">
+        <div class="section-title">
+          <div>
+            <h2>真实客户名单管理</h2>
+            <p class="section-subtitle">手动录入客户，或导入 Excel 另存为 CSV 的真实客户名单。</p>
+          </div>
+          <button id="downloadTemplate" class="secondary-button" type="button">下载 CSV 模板</button>
+        </div>
+        <div class="import-grid">
+          <form id="manualLeadForm" class="manual-form">
+            <label>公司名<input name="company" required placeholder="Sydney Joinery Co" /></label>
+            <label>国家<input name="country" value="Australia" /></label>
+            <label>城市<input name="city" placeholder="Sydney" /></label>
+            <label>客户类型<input name="buyerType" placeholder="Builder / Designer / Importer" /></label>
+            <label>官网<input name="website" placeholder="https://example.com" /></label>
+            <label>联系人<input name="contactPerson" placeholder="Michael" /></label>
+            <label>职位<input name="title" placeholder="Director / Procurement" /></label>
+            <label>WhatsApp<input name="whatsapp" placeholder="+61..." /></label>
+            <label>电话<input name="phone" placeholder="+61..." /></label>
+            <label>邮箱<input name="email" placeholder="sales@example.com" /></label>
+            <label>LinkedIn<input name="linkedin" placeholder="https://linkedin.com/company/..." /></label>
+            <label class="wide-field">备注<textarea name="note" placeholder="客户来源、需求、下一步动作"></textarea></label>
+            <button class="primary-button" type="submit">新增客户</button>
+          </form>
+          <div class="csv-import-box">
+            <label>
+              导入 CSV
+              <input id="csvImport" type="file" accept=".csv,text/csv" />
+            </label>
+            <p class="section-subtitle">支持中文表头：公司名、国家、城市、客户类型、官网、联系人、职位、WhatsApp、电话、邮箱、LinkedIn、备注。</p>
+            <div id="importStatus" class="import-status">等待导入真实客户名单</div>
+          </div>
+        </div>
       </section>
 
       <section class="kpi-grid" aria-label="客户指标">
@@ -222,6 +257,7 @@
     </main>
 
     <script src="./src/v02-tools.js"></script>
+    <script src="./src/v03-tools.js"></script>
     <script src="./src/workflow-engine.js"></script>
     <script src="./src/app.js"></script>
   </body>

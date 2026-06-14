@@ -1,5 +1,6 @@
 const crmStatuses = ["New", "Verified", "Contacted", "Replied", "Quoting", "Won", "Lost"];
 const v02 = window.SkillV02;
+const v03 = window.SkillV03;
 
 const initialLeads = [
   {
@@ -345,6 +346,10 @@ const els = {
   visibleSummary: document.getElementById("visibleSummary"),
   saveStatus: document.getElementById("saveStatus"),
   resetWorkspace: document.getElementById("resetWorkspace"),
+  manualLeadForm: document.getElementById("manualLeadForm"),
+  csvImport: document.getElementById("csvImport"),
+  downloadTemplate: document.getElementById("downloadTemplate"),
+  importStatus: document.getElementById("importStatus"),
 };
 
 if (savedWorkspace?.taskStatus) {
@@ -379,6 +384,10 @@ function saveWorkspace() {
   } catch {
     els.saveStatus.textContent = "保存失败";
   }
+}
+
+function nextLeadId() {
+  return Math.max(0, ...leads.map((lead) => Number(lead.id) || 0)) + 1;
 }
 
 function priorityClass(priorityValue) {
@@ -592,7 +601,8 @@ function renderWorkflowOutput() {
 
 function runWorkflowFromInput() {
   const run = window.SkillWorkflow.createWorkflowRun(els.workflowInstruction.value);
-  leads = run.leads;
+  const merged = v03.mergeImportedLeads(leads, run.leads, nextLeadId());
+  leads = merged.leads;
   selectedId = leads[0]?.id ?? 0;
   currentKeywords = run.keywords;
   currentSteps = run.steps.map((step) => step.name);
@@ -600,7 +610,7 @@ function runWorkflowFromInput() {
   els.countryInput.value = run.task.country;
   els.buyerInput.value = run.task.buyerTypes.join(" + ");
   els.quantityInput.value = run.task.quantity;
-  els.taskStatus.textContent = "工作流已运行";
+  els.taskStatus.textContent = `工作流已运行，新增 ${merged.added} 个候选客户`;
   els.search.value = "";
   els.priorityFilter.value = "";
   els.buyerFilter.value = "";
@@ -644,6 +654,54 @@ function exportCsv() {
   URL.revokeObjectURL(url);
 }
 
+function downloadTextFile(content, filename, type = "text/csv;charset=utf-8") {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function addManualLead(event) {
+  event.preventDefault();
+  const data = Object.fromEntries(new FormData(els.manualLeadForm).entries());
+  const manualLead = v03.createManualLead(data, nextLeadId());
+  if (!manualLead.company) {
+    els.importStatus.textContent = "请先填写公司名。";
+    return;
+  }
+
+  const result = v03.mergeImportedLeads(leads, [manualLead], nextLeadId());
+  leads = result.leads;
+  selectedId = result.leads.find((lead) => lead.company === manualLead.company)?.id || selectedId;
+  els.importStatus.textContent = `手动录入完成：新增 ${result.added} 个，补全 ${result.updated} 个，跳过 ${result.skipped} 个。`;
+  els.manualLeadForm.reset();
+  els.manualLeadForm.elements.country.value = "Australia";
+  els.taskStatus.textContent = "真实客户名单已更新";
+  saveWorkspace();
+  render();
+}
+
+async function importCsvFile(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const text = await file.text();
+  const imported = v03.parseCustomerCsv(text, nextLeadId());
+  const result = v03.mergeImportedLeads(leads, imported, nextLeadId());
+  leads = result.leads;
+  selectedId = result.leads.at(-1)?.id || selectedId;
+  els.importStatus.textContent = `CSV 导入完成：新增 ${result.added} 个，补全 ${result.updated} 个，跳过重复 ${result.skipped} 个。`;
+  els.taskStatus.textContent = "真实客户名单已导入";
+  els.csvImport.value = "";
+  saveWorkspace();
+  render();
+}
+
 function render() {
   renderWorkflowOutput();
   renderRows();
@@ -656,6 +714,11 @@ function render() {
 
 els.exportCsv.addEventListener("click", exportCsv);
 els.runWorkflow.addEventListener("click", runWorkflowFromInput);
+els.manualLeadForm.addEventListener("submit", addManualLead);
+els.csvImport.addEventListener("change", importCsvFile);
+els.downloadTemplate.addEventListener("click", () => {
+  downloadTextFile(v03.buildCsvTemplate(), "SkillHuoke-v0.3-import-template.csv");
+});
 els.resetWorkspace.addEventListener("click", () => {
   localStorage.removeItem(v02.storageKey);
   leads = [...initialLeads];
