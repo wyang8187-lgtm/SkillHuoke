@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Skill获客外贸客户智能平台</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="运营导航">
+        <div class="brand-lockup">
+          <span class="brand-mark">S</span>
+          <div>
+            <strong>Skill获客</strong>
+            <span>外贸客户运营</span>
+          </div>
+        </div>
+        <nav class="nav-list">
+          <a href="#workflow">工作流运行</a>
+          <a href="#operations">运营节奏</a>
+          <a href="#leads">客户池</a>
+          <a href="#detail">客户详情</a>
+        </nav>
+        <div class="sidebar-note">
+          <strong>今日原则</strong>
+          <span>先筛 A/B 级客户，再人工核验联系方式，最后复制话术联系。</span>
+        </div>
+      </aside>
+
+      <section class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Skill获客 MVP</p>
+          <h1>外贸客户智能运营中台</h1>
+          <p class="topbar-subtitle">输入产品、国家、客户类型和数量，让工作流生成客户池、开发话术和 CRM 跟进动作。</p>
+        </div>
+        <div class="topbar-actions">
+          <span id="taskStatus" class="status-pill status-running">示例任务</span>
+          <button id="exportCsv" class="primary-button" type="button">导出当前客户 CSV</button>
+        </div>
+      </header>
+
+      <section id="workflow" class="task-panel" aria-label="找客任务">
+        <div class="section-title">
+          <div>
+            <h2>工作流运行器</h2>
+            <p class="section-subtitle">把你的找客要求写成一段指令，页面会转成任务、关键词、客户池和跟进动作。</p>
+          </div>
+        </div>
+        <label class="workflow-command">
+          输入你的工作流指令
+          <textarea id="workflowInstruction">产品：全屋定制、橱柜、衣柜、木门、家具出口
+目标国家：澳洲
+客户类型：Builder + Designer + Kitchen Company + Importer
+数量：50
+联系方式优先级：WhatsApp > 电话 > 邮箱 > LinkedIn</textarea>
+        </label>
+        <div class="workflow-actions">
+          <button id="runWorkflow" class="primary-button" type="button">运行工作流</button>
+          <button id="clearWorkflow" class="secondary-button" type="button">清空指令</button>
+        </div>
+        <div class="task-grid">
+          <label>
+            产品
+            <input id="productInput" value="全屋定制、橱柜、衣柜、木门、家具出口" />
+          </label>
+          <label>
+            目标国家
+            <input id="countryInput" value="Australia" />
+          </label>
+          <label>
+            客户类型
+            <input id="buyerInput" value="Builder + Designer + Kitchen Company + Importer" />
+          </label>
+          <label>
+            数量
+            <input id="quantityInput" type="number" value="50" min="1" />
+          </label>
+        </div>
+        <div class="workflow-output">
+          <div>
+            <strong>搜索关键词</strong>
+            <div id="keywordList" class="keyword-list"></div>
+          </div>
+          <div>
+            <strong>运行步骤</strong>
+            <div id="workflowSteps" class="workflow-steps"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="operations" class="operations-grid" aria-label="运营流程">
+        <article class="ops-card">
+          <span class="ops-step">01</span>
+          <strong>运行任务</strong>
+          <p>输入产品、国家、客户类型和数量，先生成客户池和搜索关键词。</p>
+        </article>
+        <article class="ops-card">
+          <span class="ops-step">02</span>
+          <strong>筛选客户</strong>
+          <p>优先看 A/B 级客户，检查 WhatsApp、电话、邮箱和来源链接。</p>
+        </article>
+        <article class="ops-card">
+          <span class="ops-step">03</span>
+          <strong>联系开发</strong>
+          <p>复制英文开发信或 WhatsApp 开场白，人工确认后再发送。</p>
+        </article>
+        <article class="ops-card">
+          <span class="ops-step">04</span>
+          <strong>CRM 跟进</strong>
+          <p>把客户状态推进到 Contacted、Replied、Quoting 或 Won。</p>
+        </article>
+      </section>
+
+      <section class="kpi-grid" aria-label="客户指标">
+        <div class="kpi">
+          <span>当前客户</span>
+          <strong id="kpiVisible">0</strong>
+        </div>
+        <div class="kpi">
+          <span>A/B级客户</span>
+          <strong id="kpiPriority">0</strong>
+        </div>
+        <div class="kpi">
+          <span>有电话线索</span>
+          <strong id="kpiPhone">0</strong>
+        </div>
+        <div class="kpi">
+          <span>待跟进</span>
+          <strong id="kpiFollow">0</strong>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div id="leads" class="lead-area">
+          <div class="section-title table-title">
+            <div>
+              <h2>客户池运营</h2>
+              <p class="section-subtitle">用筛选器找到优先客户，点开公司行查看详情和话术。</p>
+            </div>
+            <span id="visibleSummary" class="status-pill status-running">0 个客户</span>
+          </div>
+          <div class="toolbar">
+            <label class="search-field">
+              搜索
+              <input id="searchInput" placeholder="公司、产品、客户类型..." />
+            </label>
+            <label>
+              优先级
+              <select id="priorityFilter">
+                <option value="">全部</option>
+                <option value="A">A级</option>
+                <option value="B">B级</option>
+                <option value="C">C级</option>
+              </select>
+            </label>
+            <label>
+              客户类型
+              <select id="buyerFilter">
+                <option value="">全部</option>
+                <option value="Builder">Builder</option>
+                <option value="Designer">Designer</option>
+                <option value="Kitchen Company">Kitchen Company</option>
+                <option value="Importer">Importer</option>
+                <option value="Builder Supplier">Builder Supplier</option>
+              </select>
+            </label>
+            <label>
+              WhatsApp
+              <select id="whatsappFilter">
+                <option value="">全部</option>
+                <option value="已验证WhatsApp">已验证</option>
+                <option value="电话可核验WhatsApp">电话可核验</option>
+                <option value="未公开WhatsApp">未公开</option>
+              </select>
+            </label>
+            <label>
+              CRM
+              <select id="crmFilter">
+                <option value="">全部</option>
+                <option value="New">New</option>
+                <option value="Verified">Verified</option>
+                <option value="Contacted">Contacted</option>
+                <option value="Replied">Replied</option>
+                <option value="Quoting">Quoting</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>公司</th>
+                  <th>类型</th>
+                  <th>评分</th>
+                  <th>WhatsApp/电话</th>
+                  <th>邮箱</th>
+                  <th>LinkedIn</th>
+                  <th>CRM</th>
+                  <th>下一步</th>
+                </tr>
+              </thead>
+              <tbody id="leadRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <aside id="detail" class="detail-panel" aria-label="客户详情">
+          <div class="section-title">
+            <h2 id="detailCompany">选择一个客户</h2>
+            <span id="detailPriority" class="status-pill">-</span>
+          </div>
+
+          <div id="detailContent" class="detail-content"></div>
+        </aside>
+      </section>
+      </section>
+    </main>
+
+    <script src="./workflow-engine.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

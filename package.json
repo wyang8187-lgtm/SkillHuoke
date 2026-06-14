@@ -1,0 +1,21 @@
+{
+  "name": "skillhuoke",
+  "version": "0.1.0",
+  "description": "Open-source AI foreign trade lead generation and CRM workflow MVP.",
+  "private": false,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "node src/workflow-engine.test.mjs",
+    "check": "node --check src/app.js && node --check src/workflow-engine.js && node --check scripts/serve.mjs"
+  },
+  "keywords": [
+    "foreign-trade",
+    "lead-generation",
+    "crm",
+    "ai-workflow",
+    "export-sales"
+  ]
+}
+
