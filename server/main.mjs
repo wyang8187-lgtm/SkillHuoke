@@ -10,7 +10,7 @@ import { loadDotEnv } from "./config/env.mjs";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "../src");
 const port = Number(process.env.PORT || 4174);
-const serverMetadata = { version: "1.6", stage: "trial-showcase" };
+const serverMetadata = { version: "1.7", stage: "trial-showcase" };
 const version = serverMetadata.version;
 
 const contentTypes = {

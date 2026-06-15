@@ -1,0 +1,87 @@
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+export const uploadPackageExcludes = [
+  ".env",
+  ".superpowers",
+  ".v16-server.pid",
+  "node_modules",
+  "package-lock-only-temp",
+];
+
+export function buildUploadRemark({ version }) {
+  return `SkillHuoke V${version} 试运营展示版
+
+本版本属于 V1.6-V1.8 试运营展示阶段，重点是页面专业、工作台可用、能跑样例和部分真实搜索。
+
+本次上传包包含前端工作台、后端本地搜索 API、共享业务规则、示例数据、文档和测试。
+
+本版本暂不包含账号、数据库、支付、团队权限和正式商业部署能力，这些规划在 V2.5 / V3.0 后续版本实现。
+
+上传包已排除 .env 密钥、本地 pid、node_modules 和临时辅助文件。`;
+}
+
+export function buildUploadReport({ version, packageName, generatedAt }) {
+  const remark = buildUploadRemark({ version });
+  return `# SkillHuoke V${version} 上传报告
+
+## 上传包
+
+- 文件名：${packageName}
+- 生成时间：${generatedAt}
+- 版本定位：试运营展示版
+
+## 本次更新
+
+- 升级项目版本到 V${version}。
+- 保留 V1.6 的前端 / 后端 / 共享规则三层结构。
+- 固化上传报告和上传备注生成规则，后续每次打包都可直接复制备注。
+- 上传包继续排除密钥、本地运行状态和临时文件。
+
+## 包含内容
+
+- 前端页面和工作台：index.html、src/
+- 本地后端服务：server/
+- 共享业务规则：shared/
+- 示例客户数据：examples/
+- 工作流模板：workflows/
+- 文档和测试：docs/、tests/
+
+## 排除内容
+
+${uploadPackageExcludes.map((item) => `- ${item}`).join("\n")}
+
+## 上传备注
+
+\`\`\`text
+${remark}
+\`\`\`
+`;
+}
+
+function formatDate(date = new Date()) {
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+export function writeUploadReport({
+  version,
+  packageName = `SkillHuoke-V${version}-Upload.zip`,
+  outputPath,
+  generatedAt = formatDate(),
+}) {
+  const report = buildUploadReport({ version, packageName, generatedAt });
+  fs.mkdirSync(path.dirname(outputPath), { recursive: true });
+  fs.writeFileSync(outputPath, report, "utf8");
+  return report;
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const version = process.argv[2] || "1.7";
+  const packageName = process.argv[3] || `SkillHuoke-V${version}-Upload.zip`;
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+  const outputPath = path.join(root, "outputs", `SkillHuoke-V${version}-Upload-Report.md`);
+  writeUploadReport({ version, packageName, outputPath });
+  console.log(outputPath);
+}

@@ -10,7 +10,7 @@ function exists(relativePath) {
 }
 
 function read(relativePath) {
-  return fs.readFileSync(path.join(root, relativePath), "utf8");
+  return fs.readFileSync(path.join(root, relativePath), "utf8").replace(/^\uFEFF/, "");
 }
 
 const expectedFiles = [
@@ -47,7 +47,7 @@ const expectedFiles = [
 ];
 
 for (const file of expectedFiles) {
-  assert.equal(exists(file), true, `${file} should exist in the V1.6 layered structure`);
+  assert.equal(exists(file), true, `${file} should exist in the layered trial-showcase structure`);
 }
 
 const indexHtml = read("src/index.html");
@@ -59,6 +59,6 @@ assert.equal(packageJson.scripts.start, "node server/main.mjs");
 assert.match(packageJson.scripts.test, /tests\/v16-layering\.test\.mjs/);
 
 const serverMain = read("server/main.mjs");
-assert.match(serverMain, /version:\s*"1\.6"/);
+assert.match(serverMain, /version:\s*"1\.7"/);
 
-console.log("V1.6 layered structure is present.");
+console.log("Layered trial-showcase structure is present.");

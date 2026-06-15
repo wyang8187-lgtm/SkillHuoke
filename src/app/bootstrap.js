@@ -1,9 +1,9 @@
 export function markSkillHuokeRuntime() {
-  document.documentElement.dataset.skillhuokeRuntimeVersion = "1.6";
+  document.documentElement.dataset.skillhuokeRuntimeVersion = "1.7";
   document.documentElement.dataset.skillhuokeRuntimeMode = "trial-showcase";
   window.SkillHuokeRuntime = {
     ...(window.SkillHuokeRuntime || {}),
-    version: "1.6",
+    version: "1.7",
     mode: "trial-showcase",
     bootedAt: new Date().toISOString(),
   };
