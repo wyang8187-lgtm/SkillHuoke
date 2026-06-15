@@ -75,4 +75,73 @@ await assert.rejects(
   /Missing GOOGLE_SEARCH_API_KEY/,
 );
 
+await assert.rejects(
+  () =>
+    createSearchService({
+      fetchImpl: async () => ({
+        ok: false,
+        status: 403,
+        text: async () => JSON.stringify({ error: { message: "Custom Search API has not been used" } }),
+      }),
+      env: {
+        GOOGLE_SEARCH_API_KEY: "google-key",
+        GOOGLE_SEARCH_CX: "google-cx",
+      },
+    }).search({
+      provider: "google",
+      query: "kitchen company australia",
+    }),
+  /Custom Search API has not been used/,
+);
+
+const fallbackCalls = [];
+const fallbackService = createSearchService({
+  fetchImpl: async (url, options = {}) => {
+    fallbackCalls.push({ url, options });
+
+    if (String(url).includes("customsearch")) {
+      return {
+        ok: false,
+        status: 403,
+        text: async () => JSON.stringify({ error: { message: "Google project has no Custom Search access" } }),
+      };
+    }
+
+    if (String(url).includes("serpapi.com")) {
+      return {
+        ok: true,
+        json: async () => ({
+          organic_results: [
+            {
+              title: "Perth Cabinet Studio",
+              link: "https://perthcabinet.example",
+              snippet: "Cabinetry supplier for builders in Perth.",
+            },
+          ],
+        }),
+      };
+    }
+
+    throw new Error(`Unexpected URL ${url}`);
+  },
+  env: {
+    GOOGLE_SEARCH_API_KEY: "google-key",
+    GOOGLE_SEARCH_CX: "google-cx",
+    SERPAPI_API_KEY: "serp-key",
+  },
+});
+
+const fallbackResult = await fallbackService.search({
+  provider: "google",
+  query: "Australia custom cabinetry builder contact",
+  enrichContact: false,
+});
+
+assert.equal(fallbackResult.provider, "serpapi");
+assert.deepEqual(fallbackResult.attemptedProviders.map((item) => item.provider), ["google", "serpapi"]);
+assert.equal(fallbackResult.attemptedProviders[0].ok, false);
+assert.equal(fallbackResult.attemptedProviders[1].ok, true);
+assert.equal(fallbackResult.results[0].company, "Perth Cabinet Studio");
+assert.equal(fallbackCalls.length, 2);
+
 console.log("search service tests passed");

@@ -70,9 +70,33 @@ function normalizeProviderResults(provider, payload) {
   return [];
 }
 
+function hasProviderConfig(provider, env) {
+  if (provider === "google") return Boolean(env.GOOGLE_SEARCH_API_KEY && env.GOOGLE_SEARCH_CX);
+  if (provider === "bing") return Boolean(env.BING_SEARCH_API_KEY);
+  if (provider === "serpapi") return Boolean(env.SERPAPI_API_KEY);
+  return false;
+}
+
+function providerPriority(requestedProvider, env) {
+  const defaultOrder = ["serpapi", "bing", "google"];
+  const requested = requestedProvider && requestedProvider !== "auto" ? requestedProvider : "";
+  const ordered = requested ? [requested, ...defaultOrder.filter((provider) => provider !== requested)] : defaultOrder;
+  return ordered.filter((provider) => hasProviderConfig(provider, env));
+}
+
 async function fetchJson(fetchImpl, url, options) {
   const response = await fetchImpl(url, options);
-  if (!response.ok) throw new Error(`Search provider request failed: ${response.status || "unknown"}`);
+  if (!response.ok) {
+    const body = await response.text?.().catch(() => "");
+    let message = "";
+    try {
+      const payload = JSON.parse(body);
+      message = payload.error?.message || payload.message || "";
+    } catch {
+      message = body;
+    }
+    throw new Error(message || `Search provider request failed: ${response.status || "unknown"}`);
+  }
   return response.json();
 }
 
@@ -128,30 +152,52 @@ export function createSearchService({ fetchImpl = globalThis.fetch, env = proces
 
   return {
     async search(input) {
-      const provider = input.provider || "google";
+      const requestedProvider = input.provider || "auto";
       const query = clean(input.query);
       if (!query) throw new Error("Missing search query");
 
-      const url = searchUrl({ provider, query, env });
-      const payload = await fetchJson(fetchImpl, url, {
-        headers: searchHeaders({ provider, env }),
-      });
-
-      const rawResults = normalizeProviderResults(provider, payload).filter((result) => result.url);
-      const results = [];
-
-      for (const result of rawResults) {
-        const contact = input.enrichContact === false
-          ? { emails: [], phones: [], whatsapp: [], linkedin: [], contactPages: [], status: "not-requested" }
-          : await enrichContact(fetchImpl, result.url);
-        results.push(toLeadCandidate(result, input, contact));
+      const providers = providerPriority(requestedProvider, env);
+      if (!providers.length) {
+        searchUrl({ provider: requestedProvider === "auto" ? "serpapi" : requestedProvider, query, env });
       }
 
-      return {
-        provider,
-        query,
-        results,
-      };
+      const attemptedProviders = [];
+      let lastError;
+
+      for (const provider of providers) {
+        try {
+          const url = searchUrl({ provider, query, env });
+          const payload = await fetchJson(fetchImpl, url, {
+            headers: searchHeaders({ provider, env }),
+          });
+
+          const rawResults = normalizeProviderResults(provider, payload).filter((result) => result.url);
+          const results = [];
+
+          for (const result of rawResults) {
+            const contact = input.enrichContact === false
+              ? { emails: [], phones: [], whatsapp: [], linkedin: [], contactPages: [], status: "not-requested" }
+              : await enrichContact(fetchImpl, result.url);
+            results.push(toLeadCandidate(result, input, contact));
+          }
+
+          attemptedProviders.push({ provider, ok: true, count: results.length });
+
+          return {
+            provider,
+            requestedProvider,
+            query,
+            attemptedProviders,
+            results,
+          };
+        } catch (error) {
+          lastError = error;
+          attemptedProviders.push({ provider, ok: false, error: error.message });
+        }
+      }
+
+      const attemptedText = attemptedProviders.map((item) => `${item.provider}: ${item.error || "ok"}`).join("；");
+      throw new Error(`所有搜索源均失败。${attemptedText || lastError?.message || ""}`);
     },
   };
 }

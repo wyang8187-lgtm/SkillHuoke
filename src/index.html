@@ -31,7 +31,7 @@
       <section class="main-content">
       <header class="topbar">
         <div>
-          <p class="eyebrow">SkillHuoke v1.3</p>
+          <p class="eyebrow">SkillHuoke v1.3.1</p>
           <h1>外贸客户智能运营中台</h1>
           <p class="topbar-subtitle">输入产品、国家、客户类型和数量，让工作流生成客户池、开发话术和 CRM 跟进动作。</p>
         </div>
@@ -56,7 +56,7 @@
 目标国家：澳洲
 客户类型：Builder + Designer + Kitchen Company + Importer
 数量：50
-联系方式优先级：WhatsApp > 电话 > 邮箱 > LinkedIn</textarea>
+联系方式优先级：即时通讯 > 电话 > 邮箱 > 领英</textarea>
         </label>
         <div class="workflow-actions">
           <button id="runWorkflow" class="primary-button" type="button">运行工作流</button>
@@ -111,17 +111,17 @@
         <article class="ops-card">
           <span class="ops-step">02</span>
           <strong>筛选客户</strong>
-          <p>优先看 A/B 级客户，检查 WhatsApp、电话、邮箱和来源链接。</p>
+          <p>优先看 A/B 级客户，检查即时通讯、电话、邮箱和来源链接。</p>
         </article>
         <article class="ops-card">
           <span class="ops-step">03</span>
           <strong>联系开发</strong>
-          <p>复制英文开发信或 WhatsApp 开场白，人工确认后再发送。</p>
+          <p>复制英文开发信或即时通讯开场白，人工确认后再发送。</p>
         </article>
         <article class="ops-card">
           <span class="ops-step">04</span>
           <strong>CRM 跟进</strong>
-          <p>把客户状态推进到 Contacted、Replied、Quoting 或 Won。</p>
+          <p>把客户状态推进到已联系、已回复、报价中或已成交。</p>
         </article>
       </section>
 
@@ -129,7 +129,7 @@
         <div class="section-title">
           <div>
             <h2>联网获客引擎结构</h2>
-            <p class="section-subtitle">面向 Google、LinkedIn、Facebook、TikTok 和官网公开页面的合规搜索与信息补全框架。</p>
+            <p class="section-subtitle">面向谷歌、领英、脸书、TikTok 和官网公开页面的合规搜索与信息补全框架。</p>
           </div>
           <span class="status-pill status-running">API Ready</span>
         </div>
@@ -153,7 +153,7 @@
         <div class="section-title">
           <div>
             <h2>搜索引擎入口</h2>
-            <p class="section-subtitle">本地后端读取 API Key，搜索公开网页并解析官网 Contact 页面，再生成候选客户。</p>
+            <p class="section-subtitle">本地后端读取搜索密钥，搜索公开网页并解析官网联系页面，再生成候选客户。</p>
           </div>
           <span id="searchStatus" class="status-pill status-running">等待搜索</span>
         </div>
@@ -161,18 +161,19 @@
           <label>
             数据源
             <select id="searchProvider">
-              <option value="google">Google Custom Search</option>
-              <option value="bing">Bing Web Search</option>
-              <option value="serpapi">SerpAPI</option>
+              <option value="auto">自动选择（SerpAPI 优先）</option>
+              <option value="serpapi">SerpAPI 搜索服务</option>
+              <option value="bing">必应网页搜索</option>
+              <option value="google">谷歌自定义搜索</option>
             </select>
           </label>
           <label class="wide-field">
             搜索关键词
-            <input id="searchQuery" value="custom cabinetry Australia builder contact" />
+            <input id="searchQuery" value="澳洲 定制橱柜 builder 联系方式" />
           </label>
           <label class="check-field">
             <input id="searchEnrichContact" type="checkbox" checked />
-            解析官网 Contact 页面
+            解析官网联系页面
           </label>
           <button id="runInternetSearch" class="primary-button" type="button">联网搜索</button>
         </div>
@@ -196,10 +197,10 @@
             <label>官网<input name="website" placeholder="https://example.com" /></label>
             <label>联系人<input name="contactPerson" placeholder="Michael" /></label>
             <label>职位<input name="title" placeholder="Director / Procurement" /></label>
-            <label>WhatsApp<input name="whatsapp" placeholder="+61..." /></label>
+            <label>即时通讯<input name="whatsapp" placeholder="+61..." /></label>
             <label>电话<input name="phone" placeholder="+61..." /></label>
             <label>邮箱<input name="email" placeholder="sales@example.com" /></label>
-            <label>LinkedIn<input name="linkedin" placeholder="https://linkedin.com/company/..." /></label>
+            <label>领英<input name="linkedin" placeholder="https://linkedin.com/company/..." /></label>
             <label class="wide-field">备注<textarea name="note" placeholder="客户来源、需求、下一步动作"></textarea></label>
             <button class="primary-button" type="submit">新增客户</button>
           </form>
@@ -208,7 +209,7 @@
               导入 CSV
               <input id="csvImport" type="file" accept=".csv,text/csv" />
             </label>
-            <p class="section-subtitle">支持中文表头：公司名、国家、城市、客户类型、官网、联系人、职位、WhatsApp、电话、邮箱、LinkedIn、备注。</p>
+            <p class="section-subtitle">支持中文表头：公司名、国家、城市、客户类型、官网、联系人、职位、即时通讯、电话、邮箱、领英、备注。</p>
             <div id="importStatus" class="import-status">等待导入真实客户名单</div>
           </div>
         </div>
@@ -268,7 +269,7 @@
               </select>
             </label>
             <label>
-              WhatsApp
+              即时通讯
               <select id="whatsappFilter">
                 <option value="">全部</option>
                 <option value="已验证WhatsApp">已验证</option>
@@ -280,11 +281,11 @@
               CRM
               <select id="crmFilter">
                 <option value="">全部</option>
-                <option value="New">New</option>
-                <option value="Verified">Verified</option>
-                <option value="Contacted">Contacted</option>
-                <option value="Replied">Replied</option>
-                <option value="Quoting">Quoting</option>
+                <option value="New">新客户</option>
+                <option value="Verified">已核验</option>
+                <option value="Contacted">已联系</option>
+                <option value="Replied">已回复</option>
+                <option value="Quoting">报价中</option>
               </select>
             </label>
           </div>
@@ -296,9 +297,9 @@
                   <th>公司</th>
                   <th>类型</th>
                   <th>评分</th>
-                  <th>WhatsApp/电话</th>
+                  <th>即时通讯/电话</th>
                   <th>邮箱</th>
-                  <th>LinkedIn</th>
+                  <th>领英</th>
                   <th>CRM</th>
                   <th>下一步</th>
                 </tr>

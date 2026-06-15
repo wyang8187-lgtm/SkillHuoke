@@ -6,6 +6,21 @@ const v10 = window.SkillV10;
 const v11 = window.SkillV11;
 const v12 = window.SkillV12;
 const searchTools = window.SkillSearch;
+const crmStatusLabels = {
+  New: "新客户",
+  Verified: "已核验",
+  Contacted: "已联系",
+  Replied: "已回复",
+  Quoting: "报价中",
+  Won: "已成交",
+  Lost: "已丢失",
+};
+const searchProviderLabels = {
+  auto: "自动选择",
+  google: "谷歌自定义搜索",
+  bing: "必应网页搜索",
+  serpapi: "SerpAPI 搜索服务",
+};
 
 const initialLeads = [
   {
@@ -369,6 +384,7 @@ const els = {
 };
 
 let searchCandidates = [];
+let searchAttemptSummary = "";
 
 if (savedWorkspace?.taskStatus) {
   els.taskStatus.textContent = savedWorkspace.taskStatus;
@@ -422,6 +438,32 @@ function channelClass(status) {
   if (status === "已验证WhatsApp") return "channel-verified";
   if (status === "电话可核验WhatsApp") return "channel-check";
   return "channel-missing";
+}
+
+function crmStatusText(status) {
+  return crmStatusLabels[status] || status;
+}
+
+function chineseSearchError(message) {
+  const map = {
+    "Missing GOOGLE_SEARCH_API_KEY": "缺少谷歌搜索 API 密钥，请先在 .env 里填写 GOOGLE_SEARCH_API_KEY。",
+    "Missing GOOGLE_SEARCH_CX": "缺少谷歌搜索引擎编号，请先在 .env 里填写 GOOGLE_SEARCH_CX。",
+    "Missing BING_SEARCH_API_KEY": "缺少必应搜索 API 密钥，请先在 .env 里填写 BING_SEARCH_API_KEY。",
+    "Missing SERPAPI_API_KEY": "缺少 SerpAPI 密钥，请先在 .env 里填写 SERPAPI_API_KEY。",
+    "Missing search query": "缺少搜索关键词。",
+  };
+  return map[message] || message;
+}
+
+function searchProviderText(provider) {
+  return searchProviderLabels[provider] || provider;
+}
+
+function renderAttemptSummary(attemptedProviders = []) {
+  if (!attemptedProviders.length) return "";
+  return attemptedProviders
+    .map((item) => `${searchProviderText(item.provider)}：${item.ok ? `成功，${item.count || 0} 条` : `失败，${chineseSearchError(item.error)}`}`)
+    .join("；");
 }
 
 function firstEmail(lead) {
@@ -481,7 +523,7 @@ function renderRows() {
             <span class="muted">${lead.email}</span>
           </td>
           <td><a href="${lead.linkedin}" target="_blank" rel="noreferrer">打开</a></td>
-          <td>${lead.crmStatus}</td>
+          <td>${crmStatusText(lead.crmStatus)}</td>
           <td>${lead.nextAction}</td>
         </tr>
       `,
@@ -529,7 +571,7 @@ function renderDetail() {
       <p><strong>WhatsApp</strong><span class="channel-chip ${channelClass(lead.whatsappStatus)}">${lead.whatsappStatus}</span></p>
       <p><strong>电话</strong>${lead.phone}</p>
       <p><strong>邮箱</strong>${lead.emailStatus} · ${lead.email}</p>
-      <p><strong>LinkedIn</strong><a href="${lead.linkedin}" target="_blank" rel="noreferrer">打开 LinkedIn 搜索</a></p>
+      <p><strong>领英</strong><a href="${lead.linkedin}" target="_blank" rel="noreferrer">打开领英搜索</a></p>
       <p><strong>建议联系人</strong>${lead.title}</p>
     </div>
 
@@ -606,16 +648,16 @@ function renderDetail() {
           <label>
             跟进方式
             <select name="channel">
-              <option>Email</option>
-              <option>WhatsApp</option>
-              <option>Phone</option>
-              <option>LinkedIn</option>
-              <option>Meeting</option>
+              <option>邮箱</option>
+              <option>即时通讯</option>
+              <option>电话</option>
+              <option>领英</option>
+              <option>会议</option>
             </select>
           </label>
           <label>
             跟进结果
-            <input name="result" placeholder="Waiting / Replied / Need quote" />
+            <input name="result" placeholder="等待 / 已回复 / 需要报价" />
           </label>
         </div>
         <label>
@@ -654,7 +696,7 @@ function renderDetail() {
       <label>
         CRM状态
         <select id="crmStatusEditor">
-          ${crmStatuses.map((status) => `<option value="${status}" ${status === lead.crmStatus ? "selected" : ""}>${status}</option>`).join("")}
+          ${crmStatuses.map((status) => `<option value="${status}" ${status === lead.crmStatus ? "selected" : ""}>${crmStatusText(status)}</option>`).join("")}
         </select>
       </label>
       <label>
@@ -843,18 +885,18 @@ function downloadTextFile(content, filename, type = "text/csv;charset=utf-8") {
 
 function renderSearchResults() {
   if (!searchCandidates.length) {
-    els.searchResults.innerHTML = "<p class=\"muted\">暂无搜索结果。运行本地后端后点击联网搜索。</p>";
+    els.searchResults.innerHTML = `${searchAttemptSummary ? `<p class="muted">搜索源尝试：${searchAttemptSummary}</p>` : ""}<p class="muted">暂无搜索结果。运行本地后端后点击联网搜索。</p>`;
     return;
   }
 
-  els.searchResults.innerHTML = searchCandidates
+  const cards = searchCandidates
     .map((result, index) => {
       const contact = result.contact || {};
       const emails = contact.emails?.join("、") || "待核验";
       const phones = contact.phones?.join("、") || "待核验";
-      const whatsapp = contact.whatsapp?.join("、") || "未发现公开 WhatsApp";
+      const whatsapp = contact.whatsapp?.join("、") || "未发现公开即时通讯";
       const linkedin = contact.linkedin?.[0] || "";
-      const parseLabel = result.parseStatus === "parsed" ? "已解析 Contact" : "待人工核验";
+      const parseLabel = result.parseStatus === "parsed" ? "已解析联系页面" : "待人工核验";
 
       return `
         <article class="search-result-card">
@@ -865,8 +907,8 @@ function renderSearchResults() {
             <span>${parseLabel}</span>
             <span>邮箱：${emails}</span>
             <span>电话：${phones}</span>
-            <span>WhatsApp：${whatsapp}</span>
-            <span>LinkedIn：${linkedin ? `<a href="${linkedin}" target="_blank" rel="noreferrer">已发现</a>` : "待核验"}</span>
+            <span>即时通讯：${whatsapp}</span>
+            <span>领英：${linkedin ? `<a href="${linkedin}" target="_blank" rel="noreferrer">已发现</a>` : "待核验"}</span>
           </div>
           <div class="detail-actions">
             <button class="secondary-button" data-add-search-result="${index}" type="button">加入客户池</button>
@@ -875,6 +917,8 @@ function renderSearchResults() {
       `;
     })
     .join("");
+
+  els.searchResults.innerHTML = `${searchAttemptSummary ? `<p class="muted">搜索源尝试：${searchAttemptSummary}</p>` : ""}${cards}`;
 
   document.querySelectorAll("[data-add-search-result]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -933,11 +977,13 @@ async function runInternetSearch() {
       contact: result.contact,
       parseStatus: result.parseStatus,
     }));
-    els.searchStatus.textContent = `发现 ${searchCandidates.length} 条结果`;
+    searchAttemptSummary = renderAttemptSummary(payload.attemptedProviders);
+    els.searchStatus.textContent = `使用 ${searchProviderText(payload.provider)}，发现 ${searchCandidates.length} 条结果`;
     renderSearchResults();
   } catch (error) {
     els.searchStatus.textContent = "搜索失败";
-    els.searchResults.innerHTML = `<p class="muted">搜索失败：${error.message}。请确认已用 npm start 启动 V1.3 后端，并在 .env 配置搜索 API Key。</p>`;
+    searchAttemptSummary = "";
+    els.searchResults.innerHTML = `<p class="muted">搜索失败：${chineseSearchError(error.message)} 请确认已启动 V1.3 后端，并在 .env 文件里配置搜索密钥。</p>`;
   }
 }
 
