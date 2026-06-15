@@ -595,7 +595,7 @@ function renderDetail() {
     </div>
 
     <div class="detail-block">
-      <h3>v0.6 真实性评分</h3>
+      <h3>客户真实性评分</h3>
       <div class="auth-card">
         <div class="auth-score">
           <strong>${authenticity.score}</strong>
@@ -617,7 +617,7 @@ function renderDetail() {
     </div>
 
     <div class="detail-block">
-      <h3>v1.1 开发动作建议</h3>
+      <h3>开发动作建议</h3>
       <p><strong>建议渠道</strong>${developmentPlan.channel}</p>
       <p><strong>优先联系人</strong>${developmentPlan.contacts.join(" / ")}</p>
       <p><strong>开场判断</strong>${developmentPlan.opening}</p>
@@ -811,13 +811,23 @@ function renderWorkflowOutput() {
   });
   els.keywordList.innerHTML = currentKeywords.map((keyword) => `<span class="keyword-pill">${keyword}</span>`).join("");
   els.workflowSteps.innerHTML = currentSteps.map((step) => `<span class="step-pill">${step} ✅</span>`).join("");
-  els.googleStrategy.innerHTML = [...strategy.googleQueries, ...strategy.linkedinQueries.slice(0, 2)]
-    .map((item) => `<div class="strategy-item">${item}</div>`)
-    .join("");
-  els.verificationRules.innerHTML = strategy.verificationRules.map((item) => `<div class="strategy-item">${item}</div>`).join("");
-  els.apiProviders.innerHTML = sourcePlan.apiProviders.map((item) => `<div class="strategy-item">${item}</div>`).join("");
-  els.socialQueries.innerHTML = sourcePlan.socialQueries.map((item) => `<div class="strategy-item">${item}</div>`).join("");
-  els.contactFields.innerHTML = sourcePlan.extractionTargets.map((item) => `<span class="field-chip">${item}</span>`).join("");
+  if (els.googleStrategy) {
+    els.googleStrategy.innerHTML = [...strategy.googleQueries, ...strategy.linkedinQueries.slice(0, 2)]
+      .map((item) => `<div class="strategy-item">${item}</div>`)
+      .join("");
+  }
+  if (els.verificationRules) {
+    els.verificationRules.innerHTML = strategy.verificationRules.map((item) => `<div class="strategy-item">${item}</div>`).join("");
+  }
+  if (els.apiProviders) {
+    els.apiProviders.innerHTML = sourcePlan.apiProviders.map((item) => `<div class="strategy-item">${item}</div>`).join("");
+  }
+  if (els.socialQueries) {
+    els.socialQueries.innerHTML = sourcePlan.socialQueries.map((item) => `<div class="strategy-item">${item}</div>`).join("");
+  }
+  if (els.contactFields) {
+    els.contactFields.innerHTML = sourcePlan.extractionTargets.map((item) => `<span class="field-chip">${item}</span>`).join("");
+  }
 }
 
 function runWorkflowFromInput() {
@@ -868,7 +878,7 @@ function exportCsv() {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "SkillHuoke-v0.2-customers.csv";
+  link.download = "SkillHuoke-customers.csv";
   document.body.appendChild(link);
   link.click();
   link.remove();
@@ -1048,7 +1058,7 @@ async function runInternetSearch() {
   } catch (error) {
     els.searchStatus.textContent = "搜索失败";
     searchAttemptSummary = "";
-    els.searchResults.innerHTML = `<p class="muted">搜索失败：${chineseSearchError(error.message)} 请确认已启动 V1.3 后端，并在 .env 文件里配置搜索密钥。</p>`;
+    els.searchResults.innerHTML = `<p class="muted">搜索失败：${chineseSearchError(error.message)} 请确认已启动本地后端，并在 .env 文件里配置搜索密钥。</p>`;
   }
 }
 
@@ -1166,7 +1176,7 @@ els.runWorkflow.addEventListener("click", runWorkflowFromInput);
 els.manualLeadForm.addEventListener("submit", addManualLead);
 els.csvImport.addEventListener("change", importCsvFile);
 els.downloadTemplate.addEventListener("click", () => {
-  downloadTextFile(v03.buildCsvTemplate(), "SkillHuoke-v0.3-import-template.csv");
+  downloadTextFile(v03.buildCsvTemplate(), "SkillHuoke-import-template.csv");
 });
 els.runInternetSearch.addEventListener("click", runInternetSearch);
 els.runBatchSearch.addEventListener("click", runBatchSearch);

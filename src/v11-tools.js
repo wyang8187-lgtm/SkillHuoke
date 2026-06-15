@@ -90,7 +90,7 @@
       `用 LinkedIn 搜索 ${searchName}，优先找 ${contacts.slice(0, 3).join(" / ")}。`,
       hasGenericEmail(lead) ? "如果找不到真人直邮，先用官网表单发送简短开发信。" : "优先给企业邮箱发送开发信，同时在 LinkedIn 找备选联系人。",
       "3 天后记录跟进结果，未回复则发送二次跟进信。",
-      "如果客户回复，进入 Replied；如果要求价格或图纸，进入 Quoting。",
+      "如果客户回复，进入 Replied；如果要求报价或图纸，进入 Quoting。",
     ];
 
     return {

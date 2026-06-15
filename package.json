@@ -1,15 +1,15 @@
 {
   "name": "skillhuoke",
-  "version": "1.5.0-beta",
+  "version": "1.6.0-beta",
   "description": "Open-source AI foreign trade lead generation and CRM workflow MVP.",
   "private": false,
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "node server/search-server.mjs",
+    "start": "node server/main.mjs",
     "start:static": "node scripts/serve.mjs",
-    "test": "node src/workflow-engine.test.mjs && node src/v02-tools.test.mjs && node src/v03-tools.test.mjs && node src/v04-tools.test.mjs && node src/v10-tools.test.mjs && node src/v11-tools.test.mjs && node src/v12-tools.test.mjs && node src/v12b-search.test.mjs && node server/contact-parser.test.mjs && node server/lead-quality.test.mjs && node server/search-service.test.mjs && node server/batch-workflow.test.mjs && node server/proxy-fetch.test.mjs && node src/github-pages.test.mjs",
-    "check": "node --check src/app.js && node --check src/workflow-engine.js && node --check src/v02-tools.js && node --check src/v03-tools.js && node --check src/v04-tools.js && node --check src/v10-tools.js && node --check src/v11-tools.js && node --check src/v12-tools.js && node --check src/v12b-search.js && node --check server/contact-parser.mjs && node --check server/lead-quality.mjs && node --check server/search-service.mjs && node --check server/batch-workflow.mjs && node --check server/proxy-fetch.mjs && node --check server/search-server.mjs && node --check scripts/serve.mjs"
+    "test": "node tests/v16-layering.test.mjs && node src/workflow-engine.test.mjs && node src/v02-tools.test.mjs && node src/v03-tools.test.mjs && node src/v04-tools.test.mjs && node src/v10-tools.test.mjs && node src/v11-tools.test.mjs && node src/v12-tools.test.mjs && node src/v12b-search.test.mjs && node server/contact-parser.test.mjs && node server/lead-quality.test.mjs && node server/search-service.test.mjs && node server/batch-workflow.test.mjs && node server/proxy-fetch.test.mjs && node src/github-pages.test.mjs",
+    "check": "node --check src/main.js && node --check src/app/bootstrap.js && node --check src/app/dom.js && node --check src/app/events.js && node --check src/app/render.js && node --check src/app/state.js && node --check src/app.js && node --check src/workflow-engine.js && node --check src/v02-tools.js && node --check src/v03-tools.js && node --check src/v04-tools.js && node --check src/v10-tools.js && node --check src/v11-tools.js && node --check src/v12-tools.js && node --check src/v12b-search.js && node --check server/main.mjs && node --check server/api/routes.mjs && node --check server/api/errors.mjs && node --check server/config/env.mjs && node --check server/services/contact-parser.mjs && node --check server/services/lead-quality.mjs && node --check server/services/search-service.mjs && node --check server/services/batch-workflow.mjs && node --check server/services/proxy-fetch.mjs && node --check server/contact-parser.mjs && node --check server/lead-quality.mjs && node --check server/search-service.mjs && node --check server/batch-workflow.mjs && node --check server/proxy-fetch.mjs && node --check server/search-server.mjs && node --check shared/lead-model.mjs && node --check shared/lead-dedupe.mjs && node --check shared/lead-scoring.mjs && node --check shared/search-strategy.mjs && node --check shared/outreach-rules.mjs && node --check scripts/serve.mjs"
   },
   "keywords": [
     "foreign-trade",

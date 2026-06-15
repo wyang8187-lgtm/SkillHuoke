@@ -4,10 +4,198 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Skill获客外贸客户智能平台</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23067a7a'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-family='Arial' font-size='34' font-weight='700' fill='white'%3ES%3C/text%3E%3C/svg%3E" />
     <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
-    <main class="app-shell">
+    <header class="landing-nav" aria-label="产品导航">
+      <a class="landing-brand" href="#top" aria-label="Skill获客首页">
+        <span class="brand-mark">S</span>
+        <span>Skill获客</span>
+      </a>
+      <nav>
+        <a href="#landing-workflow">产品功能</a>
+        <a href="#landing-quality">解决方案</a>
+        <a href="#landing-outreach">开发跟进</a>
+        <a href="#trial">试运营工作台</a>
+      </nav>
+      <div class="landing-nav-actions">
+        <a href="#trial">试运营</a>
+        <a class="nav-cta" href="#trial">开始试运营</a>
+      </div>
+    </header>
+
+    <main id="top" class="landing-page">
+      <section class="landing-hero" aria-label="Skill获客产品介绍">
+        <div class="hero-copy">
+          <div class="hero-brand-title"><span>Skill</span>获客</div>
+          <h1>把外贸找客户变成可运行的 AI 工作流</h1>
+          <p>输入产品、国家和客户类型，生成客户池、联系方式状态、AI 评分、开发信、WhatsApp 话术和 CRM 跟进动作。</p>
+          <div class="hero-actions">
+            <a class="primary-button hero-button" href="#trial">开始试运营</a>
+            <a class="secondary-button hero-button" href="#workspace-preview">查看工作台</a>
+          </div>
+          <dl class="hero-proof">
+            <div>
+              <dt>AI</dt>
+              <dd>驱动高质量线索</dd>
+            </div>
+            <div>
+              <dt>自动化</dt>
+              <dd>从找客到跟进</dd>
+            </div>
+            <div>
+              <dt>多渠道</dt>
+              <dd>邮件 / WhatsApp</dd>
+            </div>
+            <div>
+              <dt>CRM</dt>
+              <dd>沉淀客户资产</dd>
+            </div>
+          </dl>
+        </div>
+        <div id="workspace-preview" class="hero-dashboard" aria-label="产品工作台预览">
+          <aside class="preview-sidebar">
+            <strong>Skill获客</strong>
+            <span class="active">工作台</span>
+            <span>线索池</span>
+            <span>客户发现</span>
+            <span>AI 评分</span>
+            <span>开发信</span>
+            <span>WhatsApp 话术</span>
+            <span>跟进计划</span>
+            <span>客户管理 (CRM)</span>
+          </aside>
+          <div class="preview-main">
+            <div class="preview-topbar">
+              <strong>工作台</strong>
+              <span>外贸团队 · 管理员</span>
+            </div>
+            <div class="preview-flow">
+              <div><b>1</b><span>输入需求</span><em>产品 / 国家 / 客户类型</em></div>
+              <div><b>2</b><span>发现客户</span><em>AI 生成客户池</em></div>
+              <div><b>3</b><span>AI 评分</span><em>评估客户质量</em></div>
+              <div><b>4</b><span>触达客户</span><em>开发信 / WhatsApp</em></div>
+              <div><b>5</b><span>跟进转化</span><em>CRM 跟进动作</em></div>
+            </div>
+            <div class="preview-content-grid">
+              <div class="preview-leads-panel">
+                <strong>线索概览</strong>
+                <div class="preview-kpis">
+                  <div><span>客户总数</span><b>2,842</b></div>
+                  <div><span>联系意向</span><b>1,923</b><em>67.7%</em></div>
+                  <div><span>高分客户</span><b>612</b><em>21.5%</em></div>
+                  <div><span>待跟进</span><b>386</b><em>13.6%</em></div>
+                </div>
+                <div class="preview-table full" aria-hidden="true">
+                  <div><span>BrightHome GmbH</span><small>德国家居用品</small><b class="green">邮箱有效</b><em>85</em><i>已联系</i></div>
+                  <div><span>Interiors Co. Ltd.</span><small>英国家居用品</small><b class="green">邮箱有效</b><em>78</em><i>跟进中</i></div>
+                  <div><span>Nordic Living AB</span><small>瑞典家居用品</small><b class="green">电话有效</b><em>72</em><i>待跟进</i></div>
+                  <div><span>Casa Deco SARL</span><small>法国</small><b class="red">邮箱无效</b><em>45</em><i>无效</i></div>
+                  <div><span>HomeTrend B.V.</span><small>荷兰</small><b class="green">电话有效</b><em>68</em><i>跟进中</i></div>
+                </div>
+              </div>
+              <aside class="preview-crm-panel">
+                <strong>CRM 跟进状态</strong>
+                <div><span>新线索</span><b>386</b></div>
+                <div><span>已联系</span><b>742</b></div>
+                <div><span>跟进中</span><b>583</b></div>
+                <div><span>报价中</span><b>198</b></div>
+                <div><span>已成交</span><b>126</b></div>
+                <div><span>无效</span><b>807</b></div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="landing-workflow" class="landing-section workflow-cover">
+        <h2>从找客户到成交，AI 工作流全流程覆盖</h2>
+        <div class="workflow-lineup">
+          <div><span>1</span><strong>输入需求</strong><em>产品、国家、客户类型</em></div>
+          <div><span>2</span><strong>发现客户</strong><em>多渠道识别目标客户</em></div>
+          <div><span>3</span><strong>AI 评分</strong><em>联系方式验证与评分</em></div>
+          <div><span>4</span><strong>触达客户</strong><em>生成开发信与话术</em></div>
+          <div><span>5</span><strong>跟进转化</strong><em>CRM 跟进与转化</em></div>
+        </div>
+        <div class="workflow-cards">
+          <article class="input-card">
+            <strong>输入需求</strong>
+            <label>产品<input value="户外家具" readonly /></label>
+            <label>国家/地区<input value="美国、加拿大、澳大利亚" readonly /></label>
+            <label>客户类型<input value="批发商、进口商、零售商" readonly /></label>
+            <button class="primary-button" type="button">开始发现客户</button>
+          </article>
+          <article>
+            <strong>客户发现来源</strong>
+            <p><span>搜索引擎</span><b>1,256</b></p>
+            <p><span>官网联系页</span><b>842</b></p>
+            <p><span>公开社媒页</span><b>512</b></p>
+            <p><span>CSV / 手动导入</span><b>232</b></p>
+            <p class="total"><span>合计</span><b>2,842</b></p>
+          </article>
+          <article class="score-card">
+            <strong>AI 评分维度</strong>
+            <p><span>公司规模</span><b>20%</b></p>
+            <p><span>采购潜力</span><b>25%</b></p>
+            <p><span>联系方式有效性</span><b>30%</b></p>
+            <p><span>匹配度</span><b>10%</b></p>
+            <div class="score-ring">85<small>高分客户</small></div>
+          </article>
+          <article class="message-card">
+            <strong>开发信（示例）</strong>
+            <p>主题：High-quality outdoor furniture from China</p>
+            <button class="primary-button" type="button">复制邮件</button>
+          </article>
+          <article class="message-card">
+            <strong>WhatsApp 话术（示例）</strong>
+            <p>Hi {{FirstName}}, this is {{YourName}} from {{Company}}. May I share our catalog with you?</p>
+            <button class="primary-button" type="button">复制话术</button>
+          </article>
+          <article>
+            <strong>CRM 跟进计划</strong>
+            <p><span>第1天</span><b>发送开发信</b></p>
+            <p><span>第3天</span><b>WhatsApp 触达</b></p>
+            <p><span>第14天</span><b>提供报价</b></p>
+            <button class="primary-button" type="button">创建跟进计划</button>
+          </article>
+        </div>
+      </section>
+
+      <section id="landing-quality" class="landing-section quality-story">
+        <div class="quality-panel">
+          <h2>先判断客户值不值得追，再决定怎么联系</h2>
+          <p>系统会把公司真实性、联系方式可信度、业务匹配、联系人线索和风险信号拆开评分，避免团队被假邮箱、目录站和低意向客户拖慢。</p>
+        </div>
+        <div class="quality-list-landing">
+          <div><strong>联系方式状态</strong><span>WhatsApp / 电话 / 邮箱 / LinkedIn 分开标注</span></div>
+          <div><strong>客户优先级</strong><span>A/B/C 分层，先看最可能成交的对象</span></div>
+          <div><strong>建议动作</strong><span>优先开发、先核验、补资料或暂缓开发</span></div>
+        </div>
+      </section>
+
+      <section id="landing-outreach" class="landing-section outreach-story">
+        <div>
+          <h2>开发信、WhatsApp 话术和 CRM 跟进放在同一页</h2>
+          <p>每个客户详情里都能看到英文开发信、即时通讯开场白、下一步动作和跟进备注。试运营阶段可以先人工确认，再复制发送。</p>
+        </div>
+        <div class="outreach-preview">
+          <strong>Hi Michael,</strong>
+          <p>We supply custom kitchen cabinets, wardrobes and interior doors for project and retail channels. I found your company while researching Australian kitchen and joinery businesses...</p>
+          <span>下一步：核验采购 / 项目负责人后发送首封开发信</span>
+        </div>
+      </section>
+
+      <section id="landing-pricing" class="landing-section trial-cta">
+        <div>
+          <h2>先用本地 MVP 跑一轮真实业务流程</h2>
+          <p>当前版本不需要数据库，打开网页就能试。配置搜索 API 后，可以进一步使用本地后端做联网搜索和官网联系页解析。</p>
+        </div>
+        <a class="primary-button hero-button" href="#trial">进入试运营工作台</a>
+      </section>
+    </main>
+
+    <main id="trial" class="app-shell">
       <aside class="sidebar" aria-label="运营导航">
         <div class="brand-lockup">
           <span class="brand-mark">S</span>
@@ -31,7 +219,7 @@
       <section class="main-content">
       <header class="topbar">
         <div>
-          <p class="eyebrow">SkillHuoke v1.5</p>
+          <p class="eyebrow">SkillHuoke V1.6 试运营版</p>
           <h1>外贸客户智能运营中台</h1>
           <p class="topbar-subtitle">输入产品、国家、客户类型和数量，让工作流生成客户池、开发话术和 CRM 跟进动作。</p>
         </div>
@@ -90,16 +278,6 @@
             <div id="workflowSteps" class="workflow-steps"></div>
           </div>
         </div>
-        <div class="strategy-panel">
-          <div>
-            <strong>v0.7 搜索策略</strong>
-            <div id="googleStrategy" class="strategy-list"></div>
-          </div>
-          <div>
-            <strong>核验规则</strong>
-            <div id="verificationRules" class="strategy-list"></div>
-          </div>
-        </div>
       </section>
 
       <section id="operations" class="operations-grid" aria-label="运营流程">
@@ -123,30 +301,6 @@
           <strong>CRM 跟进</strong>
           <p>把客户状态推进到已联系、已回复、报价中或已成交。</p>
         </article>
-      </section>
-
-      <section id="sourceEngine" class="source-panel" aria-label="联网获客引擎">
-        <div class="section-title">
-          <div>
-            <h2>联网获客引擎结构</h2>
-            <p class="section-subtitle">面向谷歌、领英、脸书、TikTok 和官网公开页面的合规搜索与信息补全框架。</p>
-          </div>
-          <span class="status-pill status-running">API Ready</span>
-        </div>
-        <div class="source-grid">
-          <div>
-            <strong>可接入数据源</strong>
-            <div id="apiProviders" class="strategy-list"></div>
-          </div>
-          <div>
-            <strong>公开社媒搜索</strong>
-            <div id="socialQueries" class="strategy-list"></div>
-          </div>
-          <div>
-            <strong>客户字段提取</strong>
-            <div id="contactFields" class="field-list"></div>
-          </div>
-        </div>
       </section>
 
       <section id="searchEngine" class="search-panel" aria-label="搜索引擎入口">
@@ -332,6 +486,6 @@
     <script src="./src/v12-tools.js"></script>
     <script src="./src/v12b-search.js"></script>
     <script src="./src/workflow-engine.js"></script>
-    <script src="./src/app.js"></script>
+    <script type="module" src="./src/main.js"></script>
   </body>
 </html>
