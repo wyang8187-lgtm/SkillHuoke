@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createSearchService } from "./search-service.mjs";
 import { createConfiguredFetch, resolveProxyUrl } from "./proxy-fetch.mjs";
+import { runLeadBatch } from "./batch-workflow.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(__dirname, "../src");
@@ -103,7 +104,7 @@ const searchService = createSearchService({
 
 const server = http.createServer(async (request, response) => {
   if (request.method === "GET" && request.url === "/api/health") {
-    sendJson(response, 200, { ok: true, version: "1.4" });
+    sendJson(response, 200, { ok: true, version: "1.5" });
     return;
   }
 
@@ -118,11 +119,22 @@ const server = http.createServer(async (request, response) => {
     return;
   }
 
+  if (request.method === "POST" && request.url === "/api/batch-search") {
+    try {
+      const input = await readJsonBody(request);
+      const result = await runLeadBatch({ searchService, input });
+      sendJson(response, 200, result);
+    } catch (error) {
+      sendJson(response, 400, { error: translateServerError(error.message) });
+    }
+    return;
+  }
+
   serveStatic(request, response);
 });
 
 server.listen(port, "127.0.0.1", () => {
-  console.log(`SkillHuoke v1.4 running at http://127.0.0.1:${port}`);
+  console.log(`SkillHuoke v1.5 running at http://127.0.0.1:${port}`);
   console.log("Search API: POST http://127.0.0.1:4174/api/search");
   console.log(proxyUrl ? `Proxy enabled: ${proxyUrl}` : "Proxy disabled");
 });

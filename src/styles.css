@@ -324,6 +324,51 @@ h2 {
   margin: 0;
 }
 
+.batch-task-log {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.batch-summary {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+}
+
+.batch-summary span {
+  background: #eef6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 10px;
+}
+
+.batch-task-list {
+  display: grid;
+  gap: 8px;
+}
+
+.batch-task-item {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.batch-task-item strong {
+  font-size: 13px;
+}
+
+.batch-task-item span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .field-list {
   display: flex;
   flex-wrap: wrap;

@@ -379,12 +379,16 @@ const els = {
   searchEnrichContact: document.getElementById("searchEnrichContact"),
   searchQuery: document.getElementById("searchQuery"),
   runInternetSearch: document.getElementById("runInternetSearch"),
+  runBatchSearch: document.getElementById("runBatchSearch"),
+  addAllCandidates: document.getElementById("addAllCandidates"),
+  batchTaskLog: document.getElementById("batchTaskLog"),
   searchResults: document.getElementById("searchResults"),
   searchStatus: document.getElementById("searchStatus"),
 };
 
 let searchCandidates = [];
 let searchAttemptSummary = "";
+let batchSummary = null;
 
 if (savedWorkspace?.taskStatus) {
   els.taskStatus.textContent = savedWorkspace.taskStatus;
@@ -883,6 +887,62 @@ function downloadTextFile(content, filename, type = "text/csv;charset=utf-8") {
   URL.revokeObjectURL(url);
 }
 
+function renderBatchTaskLog(batch) {
+  batchSummary = batch || null;
+  if (!batch) {
+    els.batchTaskLog.innerHTML = "";
+    return;
+  }
+
+  els.batchTaskLog.innerHTML = `
+    <div class="batch-summary">
+      <span>任务：${batch.summary.totalTasks}</span>
+      <span>完成：${batch.summary.completedTasks}</span>
+      <span>候选：${batch.summary.accepted}</span>
+      <span>过滤噪音：${batch.summary.skippedNoise}</span>
+      <span>去重：${batch.summary.skippedDuplicates}</span>
+      <span>失败：${batch.summary.failures}</span>
+    </div>
+    <div class="batch-task-list">
+      ${batch.tasks
+        .map(
+          (task) => `
+            <div class="batch-task-item">
+              <strong>${task.query}</strong>
+              <span>${task.status === "completed" ? "已完成" : "失败"} · ${searchProviderText(task.provider || "auto")} · 发现 ${task.found} · 候选 ${task.accepted} · 过滤 ${task.skippedNoise} · 去重 ${task.skippedDuplicates}${task.error ? ` · ${chineseSearchError(task.error)}` : ""}</span>
+            </div>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function addCandidatesToLeadPool(candidates) {
+  let added = 0;
+  let updated = 0;
+  let skipped = 0;
+
+  for (const result of candidates) {
+    const lead = searchTools.convertResultToLead(result, {
+      id: nextLeadId(),
+      country: els.countryInput.value,
+      buyerType: els.buyerInput.value,
+      product: els.productInput.value,
+    });
+    const mergeResult = v03.mergeImportedLeads(leads, [lead], nextLeadId());
+    leads = mergeResult.leads;
+    added += mergeResult.added;
+    updated += mergeResult.updated;
+    skipped += mergeResult.skipped;
+    selectedId = mergeResult.leads.find((item) => item.website === lead.website)?.id || selectedId;
+  }
+
+  saveWorkspace();
+  render();
+  return { added, updated, skipped };
+}
+
 function renderSearchResults() {
   if (!searchCandidates.length) {
     els.searchResults.innerHTML = `${searchAttemptSummary ? `<p class="muted">搜索源尝试：${searchAttemptSummary}</p>` : ""}<p class="muted">暂无搜索结果。运行本地后端后点击联网搜索。</p>`;
@@ -937,18 +997,8 @@ function renderSearchResults() {
   document.querySelectorAll("[data-add-search-result]").forEach((button) => {
     button.addEventListener("click", () => {
       const result = searchCandidates[Number(button.dataset.addSearchResult)];
-      const lead = searchTools.convertResultToLead(result, {
-        id: nextLeadId(),
-        country: els.countryInput.value,
-        buyerType: els.buyerInput.value,
-        product: els.productInput.value,
-      });
-      const mergeResult = v03.mergeImportedLeads(leads, [lead], nextLeadId());
-      leads = mergeResult.leads;
-      selectedId = mergeResult.leads.find((item) => item.website === lead.website)?.id || selectedId;
-      els.searchStatus.textContent = `已加入 ${mergeResult.added} 个客户`;
-      saveWorkspace();
-      render();
+      const mergeResult = addCandidatesToLeadPool([result]);
+      els.searchStatus.textContent = `已加入 ${mergeResult.added} 个客户，更新 ${mergeResult.updated} 个，跳过 ${mergeResult.skipped} 个`;
     });
   });
 }
@@ -1000,6 +1050,65 @@ async function runInternetSearch() {
     searchAttemptSummary = "";
     els.searchResults.innerHTML = `<p class="muted">搜索失败：${chineseSearchError(error.message)} 请确认已启动 V1.3 后端，并在 .env 文件里配置搜索密钥。</p>`;
   }
+}
+
+async function runBatchSearch() {
+  const query = els.searchQuery.value.trim();
+  els.searchStatus.textContent = "批量任务运行中";
+  renderBatchTaskLog({
+    summary: { totalTasks: 0, completedTasks: 0, accepted: 0, skippedNoise: 0, skippedDuplicates: 0, failures: 0 },
+    tasks: [],
+  });
+
+  try {
+    const response = await fetch("/api/batch-search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        provider: els.searchProvider.value,
+        product: els.productInput.value,
+        country: els.countryInput.value,
+        buyerType: els.buyerInput.value,
+        quantity: Number(els.quantityInput.value) || 20,
+        enrichContact: els.searchEnrichContact.checked,
+        queries: query ? [query] : undefined,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorPayload = await response.json().catch(() => ({}));
+      throw new Error(errorPayload.error || `批量搜索接口返回 ${response.status}`);
+    }
+
+    const payload = await response.json();
+    searchCandidates = (payload.candidates || []).map((result) => ({
+      title: result.company,
+      url: result.website,
+      snippet: result.snippet,
+      source: `${result.source}${result.batchKeyword ? ` · ${result.batchKeyword}` : ""}`,
+      contact: result.contact,
+      parseStatus: result.parseStatus,
+      quality: result.quality,
+      batchKeyword: result.batchKeyword,
+    }));
+    searchAttemptSummary = `批量任务完成：候选 ${payload.summary.accepted} 条，过滤噪音 ${payload.summary.skippedNoise} 条，去重 ${payload.summary.skippedDuplicates} 条`;
+    els.searchStatus.textContent = `批量任务完成，沉淀 ${searchCandidates.length} 条候选客户`;
+    renderBatchTaskLog(payload);
+    renderSearchResults();
+  } catch (error) {
+    els.searchStatus.textContent = "批量任务失败";
+    searchAttemptSummary = "";
+    els.searchResults.innerHTML = `<p class="muted">批量任务失败：${chineseSearchError(error.message)}</p>`;
+  }
+}
+
+function addAllCandidates() {
+  if (!searchCandidates.length) {
+    els.searchStatus.textContent = "当前没有可加入的候选客户";
+    return;
+  }
+  const result = addCandidatesToLeadPool(searchCandidates);
+  els.searchStatus.textContent = `批量加入完成：新增 ${result.added} 个，更新 ${result.updated} 个，跳过 ${result.skipped} 个`;
 }
 
 function addManualLead(event) {
@@ -1060,6 +1169,8 @@ els.downloadTemplate.addEventListener("click", () => {
   downloadTextFile(v03.buildCsvTemplate(), "SkillHuoke-v0.3-import-template.csv");
 });
 els.runInternetSearch.addEventListener("click", runInternetSearch);
+els.runBatchSearch.addEventListener("click", runBatchSearch);
+els.addAllCandidates.addEventListener("click", addAllCandidates);
 els.resetWorkspace.addEventListener("click", () => {
   localStorage.removeItem(v02.storageKey);
   leads = [...initialLeads];
