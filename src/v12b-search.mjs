@@ -58,6 +58,7 @@ export function convertResultToLead(result, { id, country, buyerType, product })
   const whatsapp = contact.whatsapp?.[0] || "";
   const linkedin = contact.linkedin?.[0] || `https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(company)}`;
   const contactPage = contact.contactPages?.[0] || "";
+  const quality = result.quality || {};
 
   return {
     id,
@@ -77,13 +78,15 @@ export function convertResultToLead(result, { id, country, buyerType, product })
     linkedin,
     contactPerson: "未公开",
     title: "待 LinkedIn / 官网核验",
-    score: 72,
-    priority: "B",
+    score: quality.score || 72,
+    priority: quality.priority || "B",
     crmStatus: "New",
-    nextAction: contactPage
+    nextAction: quality.nextAction || (contactPage
       ? `打开 Contact 页面继续核验：${contactPage}`
-      : "打开官网和 LinkedIn，核验联系人、邮箱、电话和客户类型。",
-    followNote: result.parseStatus === "parsed"
+      : "打开官网和 LinkedIn，核验联系人、邮箱、电话和客户类型。"),
+    followNote: quality.verdict
+      ? `${quality.verdict}：${quality.reasons?.join("、") || "需继续核验"}。风险：${quality.risks?.join("、") || "暂无明显风险"}。`
+      : result.parseStatus === "parsed"
       ? "后端已解析官网 Contact 页面，联系方式仍需人工核验后再开发。"
       : "搜索发现：Google/Bing/SerpAPI 公开结果，加入后需人工核验官网、联系人和联系方式。",
     scoreBreakdown: [22, 15, 12, 8, 8, 7],

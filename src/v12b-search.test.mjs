@@ -86,6 +86,14 @@ const enrichedLead = convertResultToLead(
       linkedin: ["https://www.linkedin.com/company/perth-cabinet-studio"],
       contactPages: ["https://perthcabinet.example/contact"],
     },
+    quality: {
+      score: 91,
+      priority: "A",
+      verdict: "优先开发",
+      reasons: ["官网域名邮箱", "有公开联系页面"],
+      risks: [],
+      nextAction: "优先核验联系人和联系方式，确认客户类型后发送开发信。",
+    },
   },
   {
     id: 31,
@@ -99,6 +107,9 @@ assert.equal(enrichedLead.email, "sales@perthcabinet.example");
 assert.equal(enrichedLead.phone, "+61 8 9000 0000");
 assert.equal(enrichedLead.whatsappStatus, "https://wa.me/61890000000");
 assert.equal(enrichedLead.linkedin, "https://www.linkedin.com/company/perth-cabinet-studio");
-assert.match(enrichedLead.nextAction, /perthcabinet\.example\/contact/);
+assert.equal(enrichedLead.score, 91);
+assert.equal(enrichedLead.priority, "A");
+assert.match(enrichedLead.nextAction, /优先核验/);
+assert.match(enrichedLead.followNote, /官网域名邮箱/);
 
 console.log("v1.2B search tests passed");

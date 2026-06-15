@@ -64,6 +64,9 @@ assert.equal(result.results[0].contact.phones[0], "+61 2 9876 5432");
 assert.equal(result.results[0].contact.whatsapp[0], "https://wa.me/61412345678");
 assert.equal(result.results[0].contact.linkedin[0], "https://www.linkedin.com/company/example-joinery");
 assert.equal(result.results[0].parseStatus, "parsed");
+assert.equal(result.results[0].quality.priority, "A");
+assert.ok(result.results[0].quality.contactConfidence >= 80);
+assert.ok(result.results[0].quality.reasons.includes("发现公开邮箱"));
 assert.equal(calls[0].options.headers["User-Agent"], "SkillHuoke/1.3");
 
 await assert.rejects(

@@ -897,10 +897,19 @@ function renderSearchResults() {
       const whatsapp = contact.whatsapp?.join("、") || "未发现公开即时通讯";
       const linkedin = contact.linkedin?.[0] || "";
       const parseLabel = result.parseStatus === "parsed" ? "已解析联系页面" : "待人工核验";
+      const quality = result.quality || {};
+      const reasons = quality.reasons?.length ? quality.reasons.join("、") : "暂无明确推荐理由";
+      const risks = quality.risks?.length ? quality.risks.join("、") : "暂无明显风险";
 
       return `
         <article class="search-result-card">
           <h3>${result.title}</h3>
+          <div class="quality-summary">
+            <span>客户等级：${quality.priority || "待评估"}</span>
+            <span>真实性评分：${quality.score ?? "-"} 分</span>
+            <span>联系方式可信度：${quality.contactConfidence ?? "-"} 分</span>
+            <span>${quality.verdict || "待人工判断"}</span>
+          </div>
           <div class="search-result-meta">${result.source} · <a href="${result.url}" target="_blank" rel="noreferrer">${result.url}</a></div>
           <p>${result.snippet || "无摘要，加入客户池后需人工核验。"}</p>
           <div class="contact-signal-grid">
@@ -909,6 +918,11 @@ function renderSearchResults() {
             <span>电话：${phones}</span>
             <span>即时通讯：${whatsapp}</span>
             <span>领英：${linkedin ? `<a href="${linkedin}" target="_blank" rel="noreferrer">已发现</a>` : "待核验"}</span>
+          </div>
+          <div class="quality-detail">
+            <p><strong>推荐理由：</strong>${reasons}</p>
+            <p><strong>风险提醒：</strong>${risks}</p>
+            <p><strong>下一步：</strong>${quality.nextAction || "先人工核验公司官网和联系方式。"}</p>
           </div>
           <div class="detail-actions">
             <button class="secondary-button" data-add-search-result="${index}" type="button">加入客户池</button>
@@ -976,6 +990,7 @@ async function runInternetSearch() {
       source: result.source,
       contact: result.contact,
       parseStatus: result.parseStatus,
+      quality: result.quality,
     }));
     searchAttemptSummary = renderAttemptSummary(payload.attemptedProviders);
     els.searchStatus.textContent = `使用 ${searchProviderText(payload.provider)}，发现 ${searchCandidates.length} 条结果`;

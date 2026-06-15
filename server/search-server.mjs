@@ -103,7 +103,7 @@ const searchService = createSearchService({
 
 const server = http.createServer(async (request, response) => {
   if (request.method === "GET" && request.url === "/api/health") {
-    sendJson(response, 200, { ok: true, version: "1.3.1" });
+    sendJson(response, 200, { ok: true, version: "1.4" });
     return;
   }
 
@@ -122,7 +122,7 @@ const server = http.createServer(async (request, response) => {
 });
 
 server.listen(port, "127.0.0.1", () => {
-  console.log(`SkillHuoke v1.3.1 running at http://127.0.0.1:${port}`);
+  console.log(`SkillHuoke v1.4 running at http://127.0.0.1:${port}`);
   console.log("Search API: POST http://127.0.0.1:4174/api/search");
   console.log(proxyUrl ? `Proxy enabled: ${proxyUrl}` : "Proxy disabled");
 });

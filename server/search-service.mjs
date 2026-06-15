@@ -1,4 +1,5 @@
 import { buildContactPageCandidates, extractContactSignals, mergeContactSignals } from "./contact-parser.mjs";
+import { assessLeadCandidate } from "./lead-quality.mjs";
 
 function clean(value) {
   return String(value ?? "").trim();
@@ -133,8 +134,7 @@ async function enrichContact(fetchImpl, website) {
 
 function toLeadCandidate(result, input, contact) {
   const company = stripCompanySuffix(result.title) || result.url;
-
-  return {
+  const candidate = {
     company,
     country: input.country || "待核验",
     buyerType: input.buyerType || "搜索发现客户",
@@ -144,6 +144,10 @@ function toLeadCandidate(result, input, contact) {
     snippet: result.snippet,
     parseStatus: contact.status,
     contact,
+  };
+  return {
+    ...candidate,
+    quality: assessLeadCandidate(candidate),
   };
 }
 
