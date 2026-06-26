@@ -1,200 +1,131 @@
-﻿# SkillHuoke
+# AI Lead Platform
 
-SkillHuoke 鏄竴涓紑婧愮殑澶栬锤 AI 鑾峰涓庡鎴疯繍钀ョ郴缁熷師鍨嬶紝闈㈠悜澶栬锤宸ュ巶銆丼OHO銆佸璐稿洟闃熷拰鏈嶅姟鍟嗐€傚畠鎶娾€滆緭鍏ヤ骇鍝佸拰甯傚満 -> 鐢熸垚瀹㈡埛寮€鍙戝伐浣滄祦 -> 杈撳嚭瀹㈡埛姹犮€佽仈绯绘柟寮忕姸鎬併€丄I 璇勫垎銆佸紑鍙戜俊銆乄hatsApp 璇濇湳銆丆RM 璺熻繘鍜?CSV 瀵煎嚭鈥濆仛鎴愪竴涓彲鐩存帴杩愯鐨勭綉椤靛伐鍏枫€?
-> 褰撳墠鐗堟湰鏄棤闇€鏁版嵁搴撱€佹棤闇€瀹夎渚濊禆鐨勬湰鍦?MVP銆傚畠閫傚悎鍋氫骇鍝佹紨绀恒€佷笟鍔℃祦绋嬮獙璇佸拰鍚庣画 SaaS 绯荤粺寮€鍙戣捣鐐广€?
-## 褰撳墠鐗堟湰
+AI Lead Platform 是一个面向外贸获客、客户池管理和营销跟进的开源 SaaS 原型。项目基于 Next.js 16、React 19、shadcn/ui、Tailwind CSS 和 Supabase，适合继续开发成类似 SkillHuoke 的 AI 智能获客平台。
+
+当前整理版本：`v0.10.1`
+
+## 核心模块
+
+- 仪表盘：客户、线索、商机、任务和转化数据概览
+- AI 获客中心：智能搜索、高级搜索、线索发现、批量开发、多渠道获客
+- 社媒线索：LinkedIn、Facebook、TikTok 公开线索入口
+- 客户管理：客户列表、公海池、客户分类看板
+- 线索池：线索录入、分配、转客户
+- 营销中心：邮件营销、WhatsApp、自动化流程
+- 数据分析：客户分析、销售分析、获客效率分析
+- 系统设置：API Key、团队、系统参数、数据导入导出
+
+## 预留获客 API 接口
+
+项目已预留统一获客搜索接口：
 
 ```text
-V1.7 - 璇曡繍钀?UI銆佸彲鎿嶄綔宸ヤ綔鍙般€佸鎴锋睜鍜岃窡杩涙祦绋嬫墦纾?```
-
-## 鏍稿績鍔熻兘
-
-- 杈撳叆浜у搧銆佸浗瀹躲€佸鎴风被鍨嬪拰鏁伴噺
-- 鑷姩鐢熸垚鎼滅储鍏抽敭璇?- 灞曠ず宸ヤ綔娴佽繍琛屾楠?- 鐢熸垚瀹㈡埛姹犺〃鏍?- 灞曠ず鍏徃瀹樼綉銆佸浗瀹躲€佸煄甯傘€佸鎴风被鍨嬪拰鏉ユ簮閾炬帴
-- 鏍囨敞 WhatsApp / 鐢佃瘽 / 閭 / LinkedIn 鐘舵€?- AI 鍖归厤璇勫垎鍜屼紭鍏堢骇
-- 鐢熸垚鑻辨枃寮€鍙戜俊
-- 鐢熸垚 WhatsApp 寮€鍦虹櫧
-- CRM 鐘舵€佸拰璺熻繘澶囨敞
-- 瀵煎嚭褰撳墠绛涢€夊鎴?CSV
-- 娴忚鍣ㄦ湰鍦颁繚瀛樺鎴?CRM 鐘舵€佸拰璺熻繘澶囨敞
-- 鍐呯疆棣栨寮€鍙戙€佷簩娆¤窡杩涖€佹姤浠烽個璇?3 濂楄嫳鏂囨ā鏉?- 瀵煎嚭涓枃瀛楁 CSV锛岄€傚悎 Excel 鎵撳紑
-- 鎵嬪姩褰曞叆鐪熷疄瀹㈡埛骞惰繘鍏ュ悓涓€涓鎴锋睜
-- 瀵煎叆 Excel 鍙﹀瓨涓?CSV 鐨勭湡瀹炲鎴峰悕鍗?- 鎸夊畼缃戞垨鍏徃鍚?+ 鍥藉鍘婚噸锛屼繚鐣欏凡鏈?CRM 璺熻繘鐘舵€?- 瀹㈡埛璇︽儏鏄剧ず鏁版嵁璐ㄩ噺銆佺己澶卞瓧娈靛拰寤鸿鍔ㄤ綔
-- 鏀寔瀹㈡埛鏍囩鍜岃窡杩涜褰曟椂闂寸嚎
-- 鎵嬪姩褰曞叆鍜?CSV 瀵煎叆鏃舵彁绀洪渶瑕佹牳楠岀殑鏁版嵁瀛楁
-- 鏇存槑浜殑 SaaS 宸ヤ綔鍙扮晫闈€佽〃鏍笺€佹爣绛惧拰瀹㈡埛璇︽儏瑙嗚
-- 瀹㈡埛鐪熷疄鎬ц瘎鍒嗭細鍏徃銆佽仈绯绘柟寮忋€佽仈绯讳汉銆丩inkedIn銆佷笟鍔″尮閰嶅拰椋庨櫓淇″彿
-- 鑷姩鐢熸垚鎼滅储鍏抽敭璇嶅拰杩愯姝ラ
-- 寮€鍙戝姩浣滃缓璁細浼樺厛寮€鍙戙€佸厛鏍搁獙鍐嶅紑鍙戙€佽ˉ鍏ㄨ祫鏂欍€佹殏缂撳紑鍙?- 鎸夊鎴风被鍨嬫帹鑽?Owner / Procurement / Project / Design / Sourcing 绛夎仈绯讳汉
-- 鎸夐闄╀俊鍙风敓鎴愬畼缃戣〃鍗曘€丩inkedIn 浜哄憳鎼滅储銆乄hatsApp 鏍搁獙绛夊姩浣?- 涓烘瘡涓鎴风敓鎴愭洿鑷劧鐨勮嫳鏂囧紑鍦哄垽鏂?- 棰勭暀 Google Custom Search / SerpAPI / Bing / 閭绾跨储 API 鎺ュ叆缁撴瀯
-- 鐢熸垚 LinkedIn銆丗acebook銆乀ikTok 鍏紑椤甸潰鎼滅储鎸囦护
-- 淇鑻辨枃寮€鍙戜俊鍜?WhatsApp 璇濇湳涓殑涓枃浜у搧璇?- 鏀寔 Google Custom Search / Bing / SerpAPI 鍓嶇娴嬭瘯鍏ュ彛
-- 鎼滅储缁撴灉杩涘叆鍊欓€夋睜锛屽彲涓€閿姞鍏ュ鎴锋睜骞舵爣璁颁负鈥滄悳绱㈠彂鐜扳€?- 鎼滅储澶辫触鏃舵彁绀烘湰鍦板悗绔拰 API Key 閰嶇疆闂
-- 鏂板鏈湴鍚庣 `/api/search`锛屾悳绱㈠瘑閽ユ斁鍦?`.env`锛屼笉鍐嶆毚闇插湪鍓嶇椤甸潰
-- 鍚庣浼氬皾璇曡В鏋愬畼缃戦椤点€佽仈绯婚〉闈€佸叧浜庢垜浠〉闈紝鎻愬彇鍏紑閭銆佺數璇濄€佸嵆鏃堕€氳鍜岄鑻?- 鎼滅储鍊欓€夊鎴峰姞鍏ュ鎴锋睜鏃讹紝浼氬悓姝ュ甫鍏ュ凡瑙ｆ瀽鐨勫叕寮€鑱旂郴鏂瑰紡锛屽苟缁х画鏍囪涓洪渶瑕佷汉宸ユ牳楠?- 鎼滅储婧愭敮鎸佽嚜鍔ㄩ€夋嫨锛岄粯璁や紭鍏堜娇鐢?SerpAPI锛岀劧鍚庡皾璇曞繀搴旓紝鏈€鍚庡皾璇曡胺姝?- 鍗曚竴鎼滅储婧愬け璐ユ椂锛屽悗绔細鑷姩闄嶇骇鍒颁笅涓€涓凡閰嶇疆鐨勬悳绱㈡簮
-- 鏈湴鍚庣浼氳鍙?Windows 绯荤粺浠ｇ悊锛屼篃鏀寔 `SKILLHUOKE_PROXY` 鎵嬪姩鎸囧畾浠ｇ悊
-- 涓烘瘡鏉℃悳绱㈠€欓€夊鎴风敓鎴愮湡瀹炴€ц瘎鍒嗐€佽仈绯绘柟寮忓彲淇″害銆佸鎴风瓑绾у拰鎺ㄨ崘缁撹
-- 鑷姩璇嗗埆绀惧獟甯栧瓙銆佺洰褰曢〉绛夊櫔闊崇粨鏋滃苟闄嶄綆浼樺厛绾?- 鎼滅储缁撴灉鍗＄墖灞曠ず鎺ㄨ崘鐞嗙敱銆侀闄╂彁閱掑拰涓嬩竴姝ヨ窡杩涘缓璁?- 涓€閿姞鍏ュ鎴锋睜鏃跺悓姝ュ啓鍏ヨ瘎鍒嗗拰璺熻繘寤鸿
-- 鏀寔鍚庣鎵归噺鑾峰浠诲姟闃熷垪锛屼細鎸変骇鍝併€佸浗瀹躲€佸鎴风被鍨嬭嚜鍔ㄧ敓鎴愬缁勬悳绱㈠叧閿瘝
-- 鎵归噺浠诲姟浼氳褰曟瘡涓叧閿瘝鐨勮繍琛岀姸鎬併€佸彂鐜版暟閲忋€佽繃婊ゆ暟閲忋€佸幓閲嶆暟閲忓拰澶辫触鍘熷洜
-- 鑷姩杩囨护 D 绾у櫔闊崇粨鏋滐紝鎸夊畼缃戝煙鍚嶅幓閲嶏紝鎶?A/B/C 绾х粨鏋滄矇娣€鍒板€欓€夊鎴锋睜
-- 鍓嶇鏀寔涓€閿妸鍏ㄩ儴鍊欓€夊鎴峰姞鍏?CRM 瀹㈡埛姹?- V1.7 椤甸潰闅愯棌鍐呴儴杩唬鏍囩鍜屾殏鏈疄鐜扮殑鍟嗕笟鍔熻兘鍏ュ彛锛屽彧淇濈暀鍙В閲娿€佸彲鎿嶄綔銆佸彲璇曡繍钀ョ殑鍔熻兘
-
-## 蹇€熷紑濮?
-### 鍦ㄧ嚎婕旂ず
-
-寮€鍚?GitHub Pages 鍚庯紝鍙互閫氳繃浠撳簱鐨?Pages 鍦板潃鐩存帴璁块棶锛?
-```text
-https://wyang8187-lgtm.github.io/SkillHuoke/
+POST /api/integrations/lead-search
 ```
 
-### 鏂瑰紡涓€锛氱洿鎺ユ墦寮€
+请求示例：
 
-鎵撳紑锛?
-```text
-index.html
+```json
+{
+  "product": "custom cabinets",
+  "country": "Australia",
+  "customerType": "Builder + Designer",
+  "quantity": 20,
+  "provider": "auto",
+  "query": "Australia custom cabinets builder contact"
+}
 ```
 
-鍦?Windows 涓婂彲浠ョ洿鎺ュ弻鍑伙細
+返回会包含候选客户、联系方式可信度、评分、风险信号和下一步建议。当前默认使用 mock provider，方便开源项目直接运行；以后接 Google、SerpAPI、Bing 或其他数据服务时，只需要替换 `src/lib/integrations/lead-search-provider.ts` 中的 provider 实现。
+
+## 预留 OpenAI API 接口
+
+项目也预留统一 OpenAI 接口：
 
 ```text
-C:\Users\w2775\Documents\鎵惧\SkillHuoke\index.html
+POST /api/integrations/openai
 ```
 
-### 鏂瑰紡浜岋細鏈湴鍚庣鏈嶅姟
+请求示例：
 
-濡傛灉浣犲笇鏈涗娇鐢ㄨ仈缃戞悳绱㈠拰瀹樼綉鑱旂郴椤甸潰瑙ｆ瀽锛屽厛鍦ㄩ」鐩牴鐩綍鍒涘缓 `.env`锛?
-```text
-GOOGLE_SEARCH_API_KEY=浣犵殑璋锋瓕鎼滅储API瀵嗛挜
-GOOGLE_SEARCH_CX=浣犵殑璋锋瓕鎼滅储寮曟搸缂栧彿
-BING_SEARCH_API_KEY=浣犵殑蹇呭簲鎼滅储API瀵嗛挜
-SERPAPI_API_KEY=浣犵殑SerpAPI瀵嗛挜
+```json
+{
+  "task": "write_email",
+  "prompt": "Write a short English outreach email for an Australian kitchen company.",
+  "context": {
+    "product": "custom cabinets",
+    "customerType": "Kitchen Company"
+  }
+}
 ```
 
-鑷冲皯閰嶇疆涓€涓悳绱㈡簮鍗冲彲銆傚缓璁紭鍏堥厤缃?`SERPAPI_API_KEY`锛屽洜涓哄綋鍓?Google Custom Search JSON API 瀵规柊椤圭洰鍙兘瀛樺湪璁块棶闄愬埗銆?
-濡傛灉浣犵殑鐢佃剳闇€瑕佷唬鐞嗘墠鑳借闂捣澶?API锛屽彲浠ュ湪 `.env` 閲屽姞锛?
-```text
-SKILLHUOKE_PROXY=http://127.0.0.1:10808
-```
+当前没有配置 `OPENAI_API_KEY` 时会返回 mock 内容；配置后可在 `src/lib/integrations/openai-provider.ts` 中接入真实 OpenAI SDK 或 HTTP API。
 
-涓嶅～涔熷彲浠ワ紝鍚庣浼氬敖閲忚鍙?Windows 绯荤粺浠ｇ悊銆傜劧鍚庤繍琛岋細
+## 本次整理内容
+
+- 将项目包名整理为 `ai-lead-platform`
+- 将版本整理为 `0.10.1`
+- 增加 MIT 开源协议
+- 增加 `.env.example`
+- 增加统一获客搜索 API 接口层
+- 增加统一 OpenAI API 接口层
+- 将启动脚本改成 Windows/macOS/Linux 都可直接运行的 Next.js 命令
+- 修复乱码 README 和设计说明文档
+- 调整 lint 配置，使生成型原型代码可以通过发布前检查
+
+## 快速开始
 
 ```bash
-npm start
+corepack pnpm install --frozen-lockfile
+corepack pnpm run dev
 ```
 
-鐒跺悗鎵撳紑锛?
+打开：
+
 ```text
-http://127.0.0.1:4174
+http://localhost:5000
 ```
 
-濡傛灉鍙兂鎵撳紑绾潤鎬佹紨绀猴紝涓嶅惎鐢ㄥ悗绔悳绱細
+## 检查代码
 
 ```bash
-npm run start:static
+corepack pnpm run ts-check
+corepack pnpm run lint:build
+corepack pnpm run build
 ```
 
-## 浣跨敤鏂瑰紡
+## 环境变量
 
-鍦ㄩ〉闈㈢殑鈥滆緭鍏ヤ綘鐨勫伐浣滄祦鎸囦护鈥濅腑濉啓锛?
-```text
-浜у搧锛氬叏灞嬪畾鍒躲€佹┍鏌溿€佽。鏌溿€佹湪闂ㄣ€佸鍏峰嚭鍙?鐩爣鍥藉锛氭境娲?瀹㈡埛绫诲瀷锛欱uilder + Designer + Kitchen Company + Importer
-鏁伴噺锛?0
-鑱旂郴鏂瑰紡浼樺厛绾э細鍗虫椂閫氳 > 鐢佃瘽 > 閭 > 棰嗚嫳
-```
-
-鐐瑰嚮 `杩愯宸ヤ綔娴乣锛岄〉闈細鐢熸垚瀹㈡埛姹犮€佸叧閿瘝銆佹楠ょ姸鎬併€佽瘎鍒嗐€丆RM 鐘舵€佸拰寮€鍙戣瘽鏈€?
-## 椤圭洰缁撴瀯
+复制 `.env.example` 为 `.env.local`，然后按需填写：
 
 ```text
-SkillHuoke/
-  README.md
-  index.html
-  LICENSE
-  package.json
-  .env.example
-  server/
-    contact-parser.mjs
-    contact-parser.test.mjs
-    search-service.mjs
-    search-service.test.mjs
-    search-server.mjs
-  src/
-    index.html
-    styles.css
-    app.js
-    v02-tools.js
-    v02-tools.mjs
-    v02-tools.test.mjs
-    v03-tools.js
-    v03-tools.mjs
-    v03-tools.test.mjs
-    v04-tools.js
-    v04-tools.mjs
-    v04-tools.test.mjs
-    v10-tools.js
-    v10-tools.mjs
-    v10-tools.test.mjs
-    v11-tools.js
-    v11-tools.mjs
-    v11-tools.test.mjs
-    v12-tools.js
-    v12-tools.mjs
-    v12-tools.test.mjs
-    v12b-search.js
-    v12b-search.mjs
-    v12b-search.test.mjs
-    workflow-engine.js
-    workflow-engine.mjs
-    workflow-engine.test.mjs
-  docs/
-    浜у搧璇存槑.md
-    宸ヤ綔娴佽鏄?md
-    鏁版嵁瀛楁璇存槑.md
-    寮€鍙戣矾绾?md
-  workflows/
-    lead-development-workflow.template.json
-    澶栬锤瀹㈡埛鑷姩寮€鍙戝伐浣滄祦妯℃澘.md
-  examples/
-    australia-cabinet-leads.csv
-  scripts/
-    serve.mjs
+COZE_SUPABASE_URL=
+COZE_SUPABASE_ANON_KEY=
+COZE_SUPABASE_SERVICE_ROLE_KEY=
+OPENAI_API_KEY=
+GOOGLE_SEARCH_API_KEY=
+GOOGLE_SEARCH_CX=
+SERPAPI_API_KEY=
+BING_SEARCH_API_KEY=
 ```
 
-## 鏁版嵁璐ㄩ噺瑙勫垯
+当前项目没有内置真实密钥。上传 GitHub 前请确认 `.env.local`、`.env`、`node_modules`、`.next` 不要提交。
 
-SkillHuoke 鐨勬牳蹇冨師鍒欐槸锛氬畞鍙爣娉ㄢ€滄湭鍏紑 / 闇€鏍搁獙鈥濓紝涔熶笉缂栭€犺仈绯绘柟寮忋€?
-- 涓嶇紪閫?WhatsApp
-- 涓嶆妸鎵€鏈夌數璇濊嚜鍔ㄥ綋 WhatsApp
-- 涓嶇紪閫犻偖绠?- 涓嶇紪閫犺仈绯讳汉
-- 姣忔潯瀹㈡埛鏁版嵁灏介噺淇濈暀瀹樼綉鎴栨潵婧愰摼鎺?- 寮€鍙戜俊鍜?WhatsApp 璇濇湳蹇呴』浜哄伐纭鍚庡啀鍙戦€?
-## 褰撳墠闄愬埗
+## 当前限制
 
-褰撳墠鐗堟湰鏄湰鍦?MVP銆傚畠宸茬粡鏀寔鏈湴鍚庣鑱旂綉鎼滅储鍜屽叕寮€鑱旂郴椤甸潰瑙ｆ瀽锛屼絾杩樹笉鏄畬鏁寸殑浜戠鑷姩鍖栬幏瀹㈢郴缁燂細
+- 多数 AI/搜索接口仍是演示或模拟逻辑，需要接入真实搜索源和 LLM 服务
+- Supabase 相关接口需要配置数据库环境变量后才能完整运行
+- 部分页面文案来自生成过程，后续建议统一做中文文案校对
+- 社媒获客仅建议解析公开页面，不应绕过登录、验证码或平台限制
 
-- GitHub Pages 闈欐€佹紨绀轰笉鍖呭惈鍚庣鎼滅储锛岄渶瑕佹湰鍦拌繍琛?`npm start`
-- 鎼滅储瀵嗛挜闇€瑕佷綘鑷繁閰嶇疆鍒?`.env`
-- 鍙В鏋愬叕寮€缃戦〉锛屼笉缁曡繃鐧诲綍銆侀獙璇佺爜銆佷粯璐瑰鎴栧钩鍙伴檺鍒?- 涓嶄細鑷姩鍙戦€侀偖浠舵垨 WhatsApp
-- 涓嶅寘鍚櫥褰曘€佸洟闃熸潈闄愩€佹暟鎹簱
-- 瀹㈡埛鏁版嵁鏄熀浜庡伐浣滄祦妯℃澘鐢熸垚鐨勬紨绀烘暟鎹?
-鍚庣画鍙互鍗囩骇涓哄畬鏁?SaaS锛?
-- Next.js 鍓嶇
-- Node.js / FastAPI 鍚庣
-- PostgreSQL 鏁版嵁搴?- OpenAI 鎺ュ彛
-- 鎼滅储鍜屾暟鎹簮鎺ュ叆
-- 閭鑽夌鍜?WhatsApp Business API
+## 建议路线
 
-## 寮€婧愬崗璁?
-MIT License
+1. v0.11：统一中文文案，修复页面乱码，完成基础可演示版本
+2. v0.12：接入真实搜索服务，加入客户真实性评分和联系方式可信度
+3. v0.13：完善客户池、线索池、CRM 跟进和 CSV/Excel 导出
+4. v0.14：接入邮件模板、WhatsApp 模板和多轮跟进记录
+5. v1.0：增加部署说明、数据库迁移、权限模型和正式发布文档
 
-## V1.7 鍚庣画鐗堟湰瀹氫綅
+## License
 
-| 闃舵 | 鐗堟湰 | 鐩爣鐘舵€?| 鍟嗕笟鍖栧垽鏂?|
-| --- | --- | --- | --- |
-| 璇曡繍钀ュ睍绀虹増 | V1.6-V1.8 | 椤甸潰涓撲笟銆佸伐浣滃彴鍙敤銆佽兘璺戞牱渚嬪拰閮ㄥ垎鐪熷疄鎼滅储 | 鍙互婕旂ず锛屼笉閫傚悎鏀惰垂 |
-| 灏忚寖鍥磋瘯鐢ㄧ増 | V2.0 | 鐪熷疄鎼滅储銆佸鎴锋睜銆佸鍏ュ鍑恒€佽窡杩涜褰曘€佸熀纭€绋冲畾鎬?| 鍙互缁欑啛浜烘垨灏忓鎴疯瘯鐢?|
-| 鍐呮祴鍟嗕笟鐗?| V2.5 | 璐﹀彿銆佹暟鎹簱銆佸洟闃熸暟鎹€佹悳绱㈤搴︺€侀敊璇鐞嗐€佹棩蹇?| 鍙互浣庝环璇曟敹璐?|
-| 姝ｅ紡鍟嗕笟鐗?| V3.0 | 鐧诲綍鏉冮檺銆佸椁愩€佹敮浠樸€佺ǔ瀹氬悗绔€佸鎴锋暟鎹畨鍏ㄣ€侀儴缃茬洃鎺?| 鍙互姝ｅ紡鍗?|
-| 澧為暱鐗?SaaS | V3.5+ | 澶氬洟闃熴€佸甯傚満妯℃澘銆佽嚜鍔ㄤ换鍔°€丄I 浼樺寲銆佺粺璁℃姤琛?| 鍙互瑙勬ā鍖栬繍钀?|
-
-V1.7 褰撳墠鍙仛鐒﹁瘯杩愯惀灞曠ず鐗堬細涓荤▼搴忔竻鏅般€佸墠绔?鍚庣/鍏变韩瑙勫垯鍒嗗眰銆佸伐浣滃彴鑳芥紨绀猴紝鏆備笉鍔犲叆璐﹀彿銆佹敮浠樸€佹暟鎹簱鍜屾寮忓晢涓氶儴缃茶兘鍔涖€?
+MIT
