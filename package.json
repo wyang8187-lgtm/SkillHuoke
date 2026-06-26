@@ -1,6 +1,6 @@
 {
   "name": "ai-lead-platform",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "private": false,
   "license": "MIT",
   "scripts": {
@@ -10,7 +10,7 @@
     "lint:build": "eslint . --quiet",
     "start": "next start -p 5000",
     "ts-check": "tsc -p tsconfig.json",
-    "validate": "pnpm run ts-check && pnpm run lint:build"
+    "validate": "corepack pnpm run ts-check && corepack pnpm run lint:build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.958.0",
